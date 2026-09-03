@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ابزار برندینگ عکس</title>
+<title>ابزار لوگو زدن عکس</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -88,7 +88,7 @@
 <body>
 <div class="app">
 
-<div class="app-title"><span class="emoji">🖼️</span> ابزار برندینگ عکس</div>
+<div class="app-title"><span class="emoji">🖼️</span> ابزار لوگو زدن عکس</div>
 
 <div class="tabs">
   <button class="tab-btn active" onclick="switchTab('process')" id="tabBtnProcess">پردازش عکس‌ها</button>
@@ -491,11 +491,11 @@ function drawComposite(canvas, photoImg, config, scaleFactor, textLines) {
     } catch (err) { console.error('خطا در رسم لوگو:', err); }
   }
 
-  if (PROFILES[currentProfile] && PROFILES[currentProfile].hasText && textLines && (textLines.title || textLines.date)) {
+if (PROFILES[currentProfile] && PROFILES[currentProfile].hasText && textLines && (textLines.title || textLines.date)) {
     const textScale = (config.textScale || 100) / 100;
-    const gapX = TEXT_STYLE.gapXRatio * lh;                          // فاصله لوگو-متن: فقط با سایز لوگو عوض می‌شه
-    const fontSize = TEXT_STYLE.fontRatio * lh * textScale;          // فونت: هم با لوگو هم با textScale
-    const lineGap = TEXT_STYLE.lineGapRatio * lh * textScale;        // فاصله بین خطوط: هم با لوگو هم با textScale
+    const gapX = TEXT_STYLE.gapXRatio * lh;                    // فاصله لوگو-متن: فقط با سایز لوگو
+    const fontSize = TEXT_STYLE.fontRatio * lh * textScale;    // فونت: با لوگو و با textScale
+    const lineGap = TEXT_STYLE.lineGapRatio * lh;               // فاصله بین خطوط: فقط با سایز لوگو، ثابت نسبت به textScale
 
     const textRightX = lx - gapX;
     const logoCenterY = ly + lh / 2;
@@ -505,7 +505,7 @@ function drawComposite(canvas, photoImg, config, scaleFactor, textLines) {
     ctx.textAlign = 'right';
     ctx.direction = 'rtl';
     ctx.fillStyle = TEXT_STYLE.color;
-    ctx.font = `${fontSize}px Kalameh, Vazirmatn, sans-serif`;
+    ctx.font = ${fontSize}px Kalameh, Vazirmatn, sans-serif;
 
     if (SHADOW_STYLE.enabled) {
       ctx.shadowColor = SHADOW_STYLE.color;

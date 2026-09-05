@@ -381,10 +381,7 @@
           <span class="step-num">۵</span>
           <span class="step-title">ذخیره پریست</span>
         </div>
-        <div class="field">
-          <label for="presetNameInput">نام پریست</label>
-          <input type="text" id="presetNameInput" placeholder="مثلاً: افقی موبایل">
-        </div>
+        
         <button class="block" onclick="savePreset()">💾 ذخیره پریست</button>
         <div id="saveStatus"></div>
       </div>
@@ -934,8 +931,7 @@ function setupDrag() {
 setupDrag();
 
 async function savePreset() {
-  const name = document.getElementById('presetNameInput').value.trim();
-  if (!name) { alert('یه اسم برای پریست وارد کنید'); return; }
+  const name = `$(sampleW)x$(sampleH)`;
   const payload = {
     action: 'save', id: 'p_' + Date.now(), profile: currentProfile, presetName: name,
     width: sampleW, height: sampleH,

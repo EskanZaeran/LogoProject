@@ -10,176 +10,390 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
   :root{
-    --bg:#0b0d12; --surface:#151822; --surface-2:#1c202c; --border:#2a2f3d;
-    --accent:#4f7bff; --accent-2:#7c5cff; --text:#eef0f5; --text-dim:#9aa1b3;
-    --ok-bg:#0d3b2e; --ok-fg:#5eead4; --warn-bg:#3a2a05; --warn-fg:#fbbf24;
-    --info-bg:#0f2a4a; --info-fg:#7dc0ff; --danger:#ef4444; --radius:16px;
+    --bg:#eef4fc;
+    --surface:#ffffff;
+    --surface-2:#f5f9ff;
+    --border:#dde8f8;
+    --accent:#2f6fed;
+    --accent-2:#5b9bff;
+    --ink:#16223f;
+    --muted:#66748f;
+    --ok-bg:#e7f8f1; --ok-fg:#1a9d6c;
+    --warn-bg:#fff6e2; --warn-fg:#b9800a;
+    --info-bg:#e9f2ff; --info-fg:#2f6fed;
+    --danger:#e14b4b;
+    --radius:16px;
+    --radius-sm:11px;
   }
   *{ box-sizing:border-box; }
   html,body{ height:100%; }
   body{
     font-family:'Vazirmatn', Tahoma, Arial, sans-serif;
     background:
-      radial-gradient(1200px 600px at 20% -10%, rgba(79,123,255,.15), transparent 60%),
-      radial-gradient(900px 500px at 100% 0%, rgba(124,92,255,.12), transparent 55%),
+      radial-gradient(1100px 560px at 12% -12%, rgba(47,111,237,.08), transparent 60%),
+      radial-gradient(900px 520px at 105% -5%, rgba(91,155,255,.10), transparent 55%),
       var(--bg);
-    color:var(--text); margin:0; padding:14px; line-height:1.6;
+    color:var(--ink);
+    margin:0;
+    line-height:1.6;
   }
-  .app{ max-width:480px; margin:0 auto; }
-  .app-title{ display:flex; align-items:center; gap:10px; font-size:19px; font-weight:800; margin:4px 0 16px; }
-  .app-title .emoji{ font-size:24px; }
-  .tabs{ display:flex; gap:6px; margin-bottom:14px; background:var(--surface); padding:5px; border-radius:999px; border:1px solid var(--border); }
-  .tab-btn{ flex:1; padding:10px 8px; background:transparent; color:var(--text-dim); border:none; border-radius:999px; cursor:pointer; font-size:13.5px; font-weight:600; font-family:inherit; transition:all .18s ease; }
-  .tab-btn.active{ background:linear-gradient(135deg,var(--accent),var(--accent-2)); color:#fff; box-shadow:0 4px 14px rgba(79,123,255,.35); }
-  .card{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:16px; margin-bottom:14px; box-shadow:0 2px 10px rgba(0,0,0,.25); }
-  .card-title{ font-size:13px; font-weight:700; color:var(--text-dim); margin-bottom:10px; }
-  select, input[type=text], input[type=number]{ width:100%; padding:11px 12px; background:var(--surface-2); color:var(--text); border:1px solid var(--border); border-radius:10px; margin-bottom:10px; font-size:14px; font-family:inherit; transition:border-color .15s; }
-  select:focus, input:focus{ outline:none; border-color:var(--accent); }
-  input[type=file]{ width:100%; margin-bottom:6px; color:var(--text-dim); font-size:13px; padding:10px; background:var(--surface-2); border:1px dashed var(--border); border-radius:10px; }
-  label{ display:block; font-size:12.5px; color:var(--text-dim); margin-bottom:6px; font-weight:600; }
-  button{ padding:12px 16px; background:linear-gradient(135deg,var(--accent),var(--accent-2)); color:#fff; border:none; border-radius:12px; cursor:pointer; font-size:14px; font-weight:700; width:100%; font-family:inherit; transition:transform .12s, box-shadow .12s; box-shadow:0 4px 14px rgba(79,123,255,.3); }
-  button:hover{ transform:translateY(-1px); }
+
+  a, button, input, select{ font-family:inherit; }
+  button:focus-visible, input:focus-visible, select:focus-visible, .tab-btn:focus-visible{
+    outline:2px solid var(--accent); outline-offset:2px;
+  }
+
+  @keyframes fadeInUp{
+    from{ opacity:0; transform:translateY(10px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+  @keyframes softGlow{
+    0%,100%{ box-shadow:0 4px 18px rgba(47,111,237,.20); }
+    50%{ box-shadow:0 4px 26px rgba(47,111,237,.32); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; }
+  }
+
+  /* ---------- App shell ---------- */
+  .appbar{
+    position:sticky; top:0; z-index:20;
+    background:rgba(238,244,252,.86); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  .appbar-inner{
+    max-width:1180px; margin:0 auto; padding:14px 18px;
+    display:flex; flex-wrap:wrap; align-items:center; gap:14px; justify-content:space-between;
+  }
+  .brand{ display:flex; align-items:center; gap:10px; font-size:19px; font-weight:800; }
+  .brand .mark{ font-size:24px; }
+
+  .tabs{
+    display:flex; gap:6px; background:var(--surface);
+    padding:5px; border-radius:999px; border:1px solid var(--border);
+    box-shadow:0 2px 10px rgba(22,34,63,.05);
+  }
+  .tab-btn{
+    padding:9px 16px; background:transparent; color:var(--muted);
+    border:none; border-radius:999px; cursor:pointer; font-size:13.5px; font-weight:600;
+    transition:all .25s ease; white-space:nowrap;
+  }
+  .tab-btn.active{
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    color:#fff; box-shadow:0 4px 14px rgba(47,111,237,.35);
+  }
+
+  .profile-picker{ display:flex; align-items:center; gap:8px; }
+  .profile-picker label{ font-size:12.5px; color:var(--muted); font-weight:600; white-space:nowrap; }
+  .profile-picker select{ min-width:190px; }
+
+  main.shell{ max-width:1180px; margin:0 auto; padding:20px 18px 100px; }
+
+  select, input[type=text], input[type=number]{
+    width:100%; padding:11px 12px; background:var(--surface-2); color:var(--ink);
+    border:1px solid var(--border); border-radius:10px; font-size:14px;
+    transition:border-color .2s, box-shadow .2s;
+  }
+  select:focus, input:focus{ outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(47,111,237,.12); }
+
+  input[type=file]{
+    width:100%; color:var(--muted); font-size:13px;
+    padding:12px; background:var(--surface-2); border:1.5px dashed var(--border); border-radius:10px;
+    transition:border-color .2s, background .2s; cursor:pointer;
+  }
+  input[type=file]:hover{ border-color:var(--accent); background:#eef5ff; }
+
+  label{ display:block; font-size:12.5px; color:var(--muted); margin-bottom:6px; font-weight:600; }
+  .field{ margin-bottom:12px; }
+
+  button{
+    position:relative; overflow:hidden;
+    padding:12px 18px; background:linear-gradient(135deg,var(--accent),var(--accent-2)); color:#fff; border:none;
+    border-radius:12px; cursor:pointer; font-size:14px; font-weight:700;
+    transition:transform .15s ease, box-shadow .15s ease;
+    box-shadow:0 4px 14px rgba(47,111,237,.28);
+  }
+  button::after{
+    content:''; position:absolute; top:0; left:-75%; width:45%; height:100%;
+    background:linear-gradient(120deg, transparent, rgba(255,255,255,.55), transparent);
+    transform:skewX(-20deg); transition:left .6s ease;
+  }
+  button:hover::after{ left:130%; }
+  button:hover{ transform:translateY(-1px); box-shadow:0 6px 20px rgba(47,111,237,.36); }
   button:active{ transform:translateY(0); }
-  button.secondary{ background:var(--surface-2); box-shadow:none; border:1px solid var(--border); color:var(--text); }
-  button.danger{ background:var(--danger); box-shadow:none; }
-  button:disabled{ background:#3a3f4d; cursor:not-allowed; box-shadow:none; transform:none; }
-  .row{ display:flex; gap:8px; }
-  .row > *{ flex:1; }
-  .canvas-wrap{
-    position:relative; width:100%; overflow:hidden; border-radius:12px;
-    background:
-      linear-gradient(45deg,#20242f 25%,transparent 25%) 0 0/16px 16px,
-      linear-gradient(-45deg,#20242f 25%,transparent 25%) 0 0/16px 16px,
-      linear-gradient(45deg,transparent 75%,#20242f 75%) 0 0/16px 16px,
-      linear-gradient(-45deg,transparent 75%,#20242f 75%) 0 0/16px 16px,
-      #15171f;
-    touch-action:none; border:1px solid var(--border);
-    min-height:160px; display:flex; align-items:center; justify-content:center;
+  button.secondary{ background:var(--surface-2); box-shadow:none; border:1px solid var(--border); color:var(--ink); }
+  button.secondary:hover{ box-shadow:0 2px 10px rgba(22,34,63,.08); }
+  button:disabled{ background:#c7ceda; cursor:not-allowed; box-shadow:none; transform:none; }
+  button:disabled::after{ display:none; }
+  button.block{ width:100%; }
+
+  .panel{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
+    padding:18px; box-shadow:0 2px 14px rgba(22,34,63,.06);
+    animation:fadeInUp .4s ease both;
   }
-  canvas{ width:100%; display:block; cursor:grab; touch-action:none; }
-  canvas:active{ cursor:grabbing; }
-  .canvas-overlay{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; text-align:center; font-size:13px; color:var(--text-dim); padding:20px; background:rgba(11,13,18,.55); }
-  .canvas-overlay.error{ color:var(--warn-fg); }
-  .canvas-overlay.hidden{ display:none; }
-  .thumb-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(96px, 1fr)); gap:10px; margin-top:10px; }
-  .thumb-grid canvas{ width:100%; border-radius:10px; border:1px solid var(--border); transition:transform .15s; cursor:default; }
-  .thumb-grid canvas:hover{ transform:scale(1.04); border-color:var(--accent); }
-  .status{ font-size:13px; padding:10px 12px; border-radius:10px; margin-bottom:10px; font-weight:600; }
+
+  .status{ font-size:13px; padding:10px 12px; border-radius:10px; font-weight:600; margin-top:10px; animation:fadeInUp .3s ease both; }
   .status.ok{ background:var(--ok-bg); color:var(--ok-fg); }
   .status.warn{ background:var(--warn-bg); color:var(--warn-fg); }
   .status.info{ background:var(--info-bg); color:var(--info-fg); }
-  .missing-group{ background:var(--warn-bg); border:1px solid #5a4108; border-radius:12px; padding:12px; margin-bottom:10px; font-size:13px; color:#ffe9b3; }
-  .missing-group button{ margin-top:8px; }
-  .slider-label{ display:flex; justify-content:space-between; font-size:12px; color:var(--text-dim); margin-bottom:4px; font-weight:600; }
-  input[type=range]{ width:100%; margin-bottom:12px; accent-color:var(--accent); height:6px; }
-  .ready-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:2px; }
-  .ready-header b{ font-size:13.5px; }
-  .ready-header .count{ font-size:12px; color:var(--text-dim); }
-  .section-div{ border-top:1px solid var(--border); margin:14px 0 10px; padding-top:10px; font-size:12px; color:var(--text-dim); font-weight:700; }
-  @media (min-width:900px){
-    .app{ max-width:960px; }
-    #tabPreset[style*="block"], #tabPreset:not([style*="none"]){
-      display:grid !important; grid-template-columns:1fr 380px; gap:16px; align-items:start;
-    }
-    #tabPreset .preset-controls{ order:2; position:sticky; top:14px; }
-    #tabPreset .preset-preview{ order:1; }
+
+  /* ---------- Process tab layout ---------- */
+  .process-grid{ display:grid; grid-template-columns:1fr; gap:16px; }
+
+  .upload-panel{ display:flex; flex-direction:column; gap:14px; }
+  .results-col{ display:flex; flex-direction:column; gap:14px; }
+
+  .missing-group{
+    background:var(--warn-bg); border:1px solid #f2dfab; border-radius:var(--radius-sm);
+    padding:14px; font-size:13px; color:#8a6008;
+    animation:fadeInUp .3s ease both;
+  }
+  .missing-group .btn-row{ margin-top:10px; }
+
+  .result-panel{ padding:16px; }
+  .ready-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:10px; flex-wrap:wrap; }
+  .ready-header b{ font-size:14px; }
+  .ready-header .count{ font-size:12px; color:var(--muted); background:var(--surface-2); padding:4px 10px; border-radius:999px; }
+
+  .thumb-grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(108px, 1fr));
+    gap:10px;
+  }
+  .thumb-grid canvas{
+    width:100%; border-radius:10px; border:1px solid var(--border);
+    transition:transform .2s ease, box-shadow .2s ease; cursor:default; display:block;
+  }
+  .thumb-grid canvas:hover{ transform:scale(1.05); box-shadow:0 6px 16px rgba(47,111,237,.20); border-color:var(--accent); }
+
+  .download-bar{
+    position:sticky; bottom:14px; margin-top:4px;
+  }
+  .download-bar button{ animation:softGlow 2.6s ease-in-out infinite; }
+
+  /* ---------- Preset tab layout ---------- */
+  .preset-grid{ display:grid; grid-template-columns:1fr; gap:16px; }
+
+  .preview-col{ display:flex; flex-direction:column; gap:14px; }
+  .canvas-wrap{
+    position:relative; width:100%; overflow:hidden; border-radius:12px;
+    background:
+      linear-gradient(45deg,#e7eefb 25%,transparent 25%) 0 0/16px 16px,
+      linear-gradient(-45deg,#e7eefb 25%,transparent 25%) 0 0/16px 16px,
+      linear-gradient(45deg,transparent 75%,#e7eefb 75%) 0 0/16px 16px,
+      linear-gradient(-45deg,transparent 75%,#e7eefb 75%) 0 0/16px 16px,
+      #f7faff;
+    touch-action:none; border:1px solid var(--border);
+    min-height:200px; display:flex; align-items:center; justify-content:center;
+  }
+  canvas{ width:100%; display:block; cursor:grab; touch-action:none; }
+  canvas:active{ cursor:grabbing; }
+  .canvas-overlay{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    text-align:center; font-size:13px; color:var(--muted); padding:20px; background:rgba(255,255,255,.7);
+  }
+  .canvas-overlay.error{ color:var(--warn-fg); }
+  .canvas-overlay.hidden{ display:none; }
+  .canvas-hint{ font-size:12px; color:var(--muted); text-align:center; margin-top:2px; }
+
+  .steps-col{ display:flex; flex-direction:column; gap:12px; }
+  .step{
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm);
+    padding:16px; border-right:3px solid var(--accent);
+    animation:fadeInUp .4s ease both;
+  }
+  .step-head{ display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+  .step-num{
+    width:24px; height:24px; border-radius:50%; flex:none;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2)); color:#fff;
+    display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800;
+  }
+  .step-title{ font-size:14px; font-weight:700; }
+
+  .slider-row{ margin-bottom:14px; }
+  .slider-row:last-child{ margin-bottom:0; }
+  .slider-label{ display:flex; justify-content:space-between; font-size:12.5px; color:var(--muted); margin-bottom:6px; font-weight:600; }
+  .slider-label span:last-child{ color:var(--ink); font-weight:700; font-variant-numeric:tabular-nums; }
+  input[type=range]{ width:100%; accent-color:var(--accent); height:6px; display:block; }
+
+  .grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+
+  /* ---------- Responsive breakpoints ---------- */
+  @media (min-width:760px){
+    .process-grid{ grid-template-columns:340px 1fr; align-items:start; }
+    .download-bar{ position:sticky; top:96px; bottom:auto; }
+  }
+  @media (min-width:980px){
+    .preset-grid{ grid-template-columns:1fr 380px; align-items:start; }
+    .steps-col{ position:sticky; top:96px; max-height:calc(100vh - 116px); overflow-y:auto; padding-left:2px; }
+  }
+  @media (max-width:759px){
+    .appbar-inner{ padding:12px 14px; }
+    main.shell{ padding:16px 14px 110px; }
+    .profile-picker select{ min-width:0; flex:1; }
   }
 </style>
 </head>
 <body>
-<div class="app">
 
-<div class="app-title"><span class="emoji">🖼️</span> ابزار برندینگ عکس</div>
+<header class="appbar">
+  <div class="appbar-inner">
+    <div class="brand"><span class="mark">🖼️</span> ابزار برندینگ عکس</div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('process')" id="tabBtnProcess">پردازش عکس‌ها</button>
+      <button class="tab-btn" onclick="switchTab('preset')" id="tabBtnPreset">ساخت پریست جدید</button>
+    </div>
+    <div class="profile-picker">
+      <label for="profileSelect">پروفایل</label>
+      <select id="profileSelect" onchange="onProfileChange()">
+        <option value="dual">دو-لوگو (رایامدیا)</option>
+        <option value="heyat">هیئت (با متن)</option>
+      </select>
+    </div>
+  </div>
+</header>
 
-<div class="tabs">
-  <button class="tab-btn active" onclick="switchTab('process')" id="tabBtnProcess">پردازش عکس‌ها</button>
-  <button class="tab-btn" onclick="switchTab('preset')" id="tabBtnPreset">ساخت پریست جدید</button>
-</div>
-
-<div class="card">
-  <label>پروفایل</label>
-  <select id="profileSelect" onchange="onProfileChange()">
-    <option value="dual">دو-لوگو (رایامدیا)</option>
-    <option value="heyat">هیئت (با متن)</option>
-  </select>
-</div>
+<main class="shell">
 
 <!-- ================= TAB: PROCESS ================= -->
 <div id="tabProcess">
-  <div class="card">
-    <label>آپلود عکس‌ها (چندتایی)</label>
-    <input type="file" id="fileInput" accept="image/*" multiple onchange="handleFiles(event)">
-    <div id="processStatus"></div>
-  </div>
+  <div class="process-grid">
 
-  <div class="card" id="batchTextCard" style="display:none;">
-    <div class="card-title">متن بنر (برای همه عکس‌های این آپلود)</div>
-    <label>متن عنوان (خط اول)</label>
-    <input type="text" id="batchTitleInput" placeholder="مثلاً: مراسم عزاداری دهه آخر ماه صفر" oninput="onBatchTextChange()">
-    <label>متن تاریخ (خط دوم)</label>
-    <input type="text" id="batchDateInput" placeholder="مثلاً: ۲۲ مرداد ۱۴۰۵" oninput="onBatchTextChange()">
-  </div>
+    <div class="upload-panel">
+      <div class="panel">
+        <div class="field">
+          <label for="fileInput">آپلود عکس‌ها (چندتایی)</label>
+          <input type="file" id="fileInput" accept="image/*" multiple onchange="handleFiles(event)">
+        </div>
+        <div id="processStatus"></div>
+      </div>
 
-  <div id="missingPresetsWrap"></div>
-  <div id="readyWrap"></div>
+      <div class="panel" id="batchTextCard" style="display:none;">
+        <div class="step-head" style="margin-bottom:12px;">
+          <span class="step-num">✎</span>
+          <span class="step-title">متن بنر (برای همه عکس‌های این آپلود)</span>
+        </div>
+        <div class="field">
+          <label for="batchTitleInput">متن عنوان (خط اول)</label>
+          <input type="text" id="batchTitleInput" placeholder="مثلاً: مراسم عزاداری دهه آخر ماه صفر" oninput="onBatchTextChange()">
+        </div>
+        <div class="field" style="margin-bottom:0;">
+          <label for="batchDateInput">متن تاریخ (خط دوم)</label>
+          <input type="text" id="batchDateInput" placeholder="مثلاً: ۲۲ مرداد ۱۴۰۵" oninput="onBatchTextChange()">
+        </div>
+      </div>
 
-  <div class="card" id="downloadCard" style="display:none;">
-    <button onclick="downloadAll()">⬇️ پردازش و دانلود همه (ZIP)</button>
+      <div class="download-bar" id="downloadCard" style="display:none;">
+        <button class="block" onclick="downloadAll()">⬇️ پردازش و دانلود همه (ZIP)</button>
+      </div>
+    </div>
+
+    <div class="results-col">
+      <div id="missingPresetsWrap"></div>
+      <div id="readyWrap"></div>
+    </div>
+
   </div>
 </div>
 
 <!-- ================= TAB: PRESET CREATION ================= -->
 <div id="tabPreset" style="display:none;">
-  <div class="preset-preview">
-    <div class="card" id="uploadCard">
-      <label>عکس نمونه</label>
-      <input type="file" id="sampleFileInput" accept="image/*" onchange="loadSampleImage(event)">
-      <div id="sampleDims" class="status info" style="display:none;"></div>
-    </div>
+  <div class="preset-grid">
 
-    <div class="card" id="previewCard" style="display:none;">
-      <div class="card-title">پیش‌نمایش — لوگو رو بکش، متن خودکار کنارش می‌شینه</div>
-      <div class="canvas-wrap">
-        <canvas id="previewCanvas"></canvas>
-        <div class="canvas-overlay" id="canvasOverlay">در حال بارگذاری تصویر...</div>
+    <div class="preview-col">
+      <div class="panel" id="uploadCard">
+        <div class="field" style="margin-bottom:8px;">
+          <label for="sampleFileInput">عکس نمونه</label>
+          <input type="file" id="sampleFileInput" accept="image/*" onchange="loadSampleImage(event)">
+        </div>
+        <div id="sampleDims" class="status info" style="display:none;"></div>
+      </div>
+
+      <div class="panel" id="previewCard" style="display:none;">
+        <div class="canvas-wrap">
+          <canvas id="previewCanvas"></canvas>
+          <div class="canvas-overlay" id="canvasOverlay">در حال بارگذاری تصویر...</div>
+        </div>
+        <div class="canvas-hint">لوگو را بکشید و جابه‌جا کنید — متن خودکار کنارش می‌نشیند</div>
       </div>
     </div>
-  </div>
 
-  <div class="preset-controls">
-    <div class="card" id="controlsCard" style="display:none;">
-      <div class="slider-label"><span>سایز لوگو (کل مجموعه لوگو+متن)</span><span id="scaleVal"></span></div>
-      <input type="range" id="scaleSlider" min="5" max="80" value="12" oninput="onScaleChange()">
+    <div class="steps-col" id="controlsCard" style="display:none;">
 
-      <div class="slider-label"><span>سایز متن (مستقل از لوگو)</span><span id="textScaleVal"></span></div>
-      <input type="range" id="textScaleSlider" min="50" max="200" value="100" oninput="onTextScaleChange()">
+      <div class="step">
+        <div class="step-head">
+          <span class="step-num">۱</span>
+          <span class="step-title">اندازه‌ی لوگو و متن (با هم)</span>
+        </div>
+        <div class="slider-row">
+          <div class="slider-label"><span>سایز لوگو (کل مجموعه)</span><span id="scaleVal"></span></div>
+          <input type="range" id="scaleSlider" min="5" max="80" value="12" oninput="onScaleChange()">
+        </div>
+        <div class="slider-row">
+          <div class="slider-label"><span>سایز متن (مستقل از لوگو)</span><span id="textScaleVal"></span></div>
+          <input type="range" id="textScaleSlider" min="50" max="200" value="100" oninput="onTextScaleChange()">
+        </div>
+      </div>
 
-      <div class="slider-label"><span>X لوگو</span><span id="logoXVal"></span></div>
-      <input type="range" id="logoXSlider" min="0" max="100" value="50" oninput="onXYChange()">
+      <div class="step">
+        <div class="step-head">
+          <span class="step-num">۲</span>
+          <span class="step-title">جای‌گذاری لوگو</span>
+        </div>
+        <div class="slider-row">
+          <div class="slider-label"><span>X لوگو</span><span id="logoXVal"></span></div>
+          <input type="range" id="logoXSlider" min="0" max="100" value="50" oninput="onXYChange()">
+        </div>
+        <div class="slider-row" style="margin-bottom:0;">
+          <div class="slider-label"><span>Y لوگو</span><span id="logoYVal"></span></div>
+          <input type="range" id="logoYSlider" min="0" max="100" value="50" oninput="onXYChange()">
+        </div>
+      </div>
 
-      <div class="slider-label"><span>Y لوگو</span><span id="logoYVal"></span></div>
-      <input type="range" id="logoYSlider" min="0" max="100" value="50" oninput="onXYChange()">
+      <div class="step">
+        <div class="step-head">
+          <span class="step-num">۳</span>
+          <span class="step-title">تنظیم دستی جای متن (اختیاری)</span>
+        </div>
+        <div class="slider-row">
+          <div class="slider-label"><span>افست X متن</span><span id="textOffXVal"></span></div>
+          <input type="range" id="textOffXSlider" min="-100" max="100" value="0" oninput="onTextOffsetChange()">
+        </div>
+        <div class="slider-row" style="margin-bottom:0;">
+          <div class="slider-label"><span>افست Y متن</span><span id="textOffYVal"></span></div>
+          <input type="range" id="textOffYSlider" min="-100" max="100" value="0" oninput="onTextOffsetChange()">
+        </div>
+      </div>
 
-      <div class="section-div">تنظیم دستی جای متن (مستقل از لوگو)</div>
+      <div class="step">
+        <div class="step-head">
+          <span class="step-num">۴</span>
+          <span class="step-title">جلوه‌ها</span>
+        </div>
+        <div class="slider-row" style="margin-bottom:0;">
+          <div class="slider-label"><span>وینیت دور تصویر</span><span id="vignetteVal"></span></div>
+          <input type="range" id="vignetteSlider" min="0" max="100" value="0" oninput="onVignetteChange()">
+        </div>
+      </div>
 
-      <div class="slider-label"><span>افست X متن</span><span id="textOffXVal"></span></div>
-      <input type="range" id="textOffXSlider" min="-100" max="100" value="0" oninput="onTextOffsetChange()">
+      <div class="step">
+        <div class="step-head">
+          <span class="step-num">۵</span>
+          <span class="step-title">ذخیره پریست</span>
+        </div>
+        <div class="field">
+          <label for="presetNameInput">نام پریست</label>
+          <input type="text" id="presetNameInput" placeholder="مثلاً: افقی موبایل">
+        </div>
+        <button class="block" onclick="savePreset()">💾 ذخیره پریست</button>
+        <div id="saveStatus"></div>
+      </div>
 
-      <div class="slider-label"><span>افست Y متن</span><span id="textOffYVal"></span></div>
-      <input type="range" id="textOffYSlider" min="-100" max="100" value="0" oninput="onTextOffsetChange()">
-
-      <div class="section-div">جلوه‌ها</div>
-
-      <div class="slider-label"><span>وینیت دور تصویر (زیر لوگو/متن)</span><span id="vignetteVal"></span></div>
-      <input type="range" id="vignetteSlider" min="0" max="100" value="0" oninput="onVignetteChange()">
-
-      <label>نام پریست</label>
-      <input type="text" id="presetNameInput" placeholder="مثلاً: افقی موبایل">
-      <button onclick="savePreset()">💾 ذخیره پریست</button>
-      <div id="saveStatus"></div>
     </div>
   </div>
 </div>
+
+</main>
 
 <script>
 // ==================== CONFIG ====================
@@ -199,15 +413,12 @@ const TEXT_STYLE = {
 };
 const DEMO_TEXT = { title: 'مراسم عزاداری دهه آخر ماه صفر', date: '۲۲ مرداد ۱۴۰۵' };
 
-// دراپ شادو — از روی مقادیر فتوشاپ (Angle=90, Distance=87px, Spread=26%, Size=43px, Opacity=71%)
-// روی سند مرجعی که ارتفاع لوگوش 403px بود محاسبه شده، پس نسبت به ارتفاع لوگو (lh) ذخیره شده
-// تا با اسلایدر سایز لوگو خودش هم بزرگ/کوچیک بشه. فقط از همینجا (کد) قابل تنظیمه.
 const SHADOW_STYLE = {
   enabled: true,
-  opacity: 0.71,                    // از فتوشاپ: Opacity 71%
-  angleDeg: 90,                     // از فتوشاپ: Angle 90
-  distanceRatio: 87 / 403,          // از فتوشاپ: Distance 87px ÷ ارتفاع لوگوی مرجع
-  blurRatio: (43 * (1 - 0.26)) / 403 // از فتوشاپ: Size 43px با تخمین اثر Spread 26% (کنواس مستقیم spread نداره)
+  opacity: 0.71,
+  angleDeg: 90,
+  distanceRatio: 87 / 403,
+  blurRatio: (43 * (1 - 0.26)) / 403
 };
 
 // ==================== STATE ====================
@@ -285,10 +496,16 @@ window.onload = async () => {
 
 function switchTab(tab) {
   currentTab = tab;
-  document.getElementById('tabProcess').style.display = tab === 'process' ? 'block' : 'none';
-  document.getElementById('tabPreset').style.display = tab === 'preset' ? 'block' : 'none';
+  const pProcess = document.getElementById('tabProcess');
+  const pPreset = document.getElementById('tabPreset');
+  pProcess.style.display = tab === 'process' ? 'block' : 'none';
+  pPreset.style.display = tab === 'preset' ? 'block' : 'none';
   document.getElementById('tabBtnProcess').classList.toggle('active', tab === 'process');
   document.getElementById('tabBtnPreset').classList.toggle('active', tab === 'preset');
+  const target = tab === 'process' ? pProcess : pPreset;
+  target.style.animation = 'none';
+  void target.offsetWidth;
+  target.style.animation = 'fadeInUp .35s ease both';
 }
 
 function onProfileChange() {
@@ -350,6 +567,29 @@ async function postToSheet(payload) {
   return res.json();
 }
 
+// ==================== LOGGING ====================
+async function logDownload(imageCount) {
+  try {
+    let ip = 'نامشخص';
+    try {
+      const ipRes = await fetch('https://api.ipify.org?format=json');
+      const ipJson = await ipRes.json();
+      ip = ipJson.ip || ip;
+    } catch (err) {
+      console.error('گرفتن IP ناموفق بود:', err);
+    }
+    await postToSheet({
+      action: 'log',
+      timestamp: new Date().toISOString(),
+      ip: ip,
+      profile: currentProfile,
+      imageCount: imageCount
+    });
+  } catch (err) {
+    console.error('ثبت لاگ ناموفق بود (روی دانلود اثری نداره):', err);
+  }
+}
+
 // ==================== PROCESS TAB ====================
 async function handleFiles(e) {
   const files = Array.from(e.target.files);
@@ -407,9 +647,11 @@ function renderMissingPresets() {
     div.className = 'missing-group';
     div.innerHTML = `
       ⚠️ ${group.images.length} عکس با ابعاد <b>${group.width}×${group.height}</b> پریست ندارند.
-      <button class="secondary" onclick='goCreatePresetFor(${group.width}, ${group.height}, ${JSON.stringify(group.images[0].file.name)})'>
-        ساخت پریست برای این ابعاد
-      </button>`;
+      <div class="btn-row">
+        <button class="secondary" onclick='goCreatePresetFor(${group.width}, ${group.height}, ${JSON.stringify(group.images[0].file.name)})'>
+          ساخت پریست برای این ابعاد
+        </button>
+      </div>`;
     wrap.appendChild(div);
   });
 }
@@ -419,7 +661,7 @@ function renderReadyPreview() {
   wrap.innerHTML = '';
   Object.entries(groupedReady).forEach(([key, group]) => {
     const section = document.createElement('div');
-    section.className = 'card';
+    section.className = 'panel result-panel';
     section.innerHTML = `<div class="ready-header"><b>${key}</b><span class="count">پریست: ${group.preset.presetName} · ${group.images.length} عکس</span></div>`;
     const grid = document.createElement('div');
     grid.className = 'thumb-grid';
@@ -445,7 +687,7 @@ function goCreatePresetFor(w, h, filename) {
   document.getElementById('sampleDims').style.display = 'block';
   document.getElementById('sampleDims').innerText = `ابعاد نمونه: ${w} × ${h}`;
   document.getElementById('previewCard').style.display = 'block';
-  document.getElementById('controlsCard').style.display = 'block';
+  document.getElementById('controlsCard').style.display = 'flex';
   document.getElementById('scaleSlider').value = logoScalePct;
   document.getElementById('textScaleSlider').value = textScalePct;
   document.getElementById('vignetteSlider').value = vignetteIntensity;
@@ -478,8 +720,6 @@ function drawComposite(canvas, photoImg, config, scaleFactor, textLines) {
 
   const W = canvas.width, H = canvas.height;
 
-  // وینیت همینجا، بلافاصله بعد از خود عکس و قبل از لوگو/متن رسم می‌شه
-  // تا لوگو و متن روش تیره نشن (زیر لوگو باشه، نه روش)
   applyVignette(ctx, W, H, config.vignette || 0);
 
   const logoEntry = logoImages[currentProfile];
@@ -494,7 +734,6 @@ function drawComposite(canvas, photoImg, config, scaleFactor, textLines) {
     lh = lw * (isFinite(ratio) ? ratio : 1);
   }
 
-  // محاسبه دراپ شادو بر اساس ارتفاع لوگو (lh) — با اسلایدر سایز لوگو خودش هم بزرگ/کوچیک می‌شه
   const angleRad = SHADOW_STYLE.angleDeg * Math.PI / 180;
   const shadowDistance = SHADOW_STYLE.distanceRatio * lh;
   const shadowOffX = -shadowDistance * Math.cos(angleRad);
@@ -519,21 +758,35 @@ function drawComposite(canvas, photoImg, config, scaleFactor, textLines) {
   if (PROFILES[currentProfile] && PROFILES[currentProfile].hasText && textLines && (textLines.title || textLines.date)) {
     const textScale = (config.textScale || 100) / 100;
     const gapX = TEXT_STYLE.gapXRatio * lh;
-    const fontSize = TEXT_STYLE.fontRatio * lh * textScale;
+    let fontSize = TEXT_STYLE.fontRatio * lh * textScale;
     const lineGap = TEXT_STYLE.lineGapRatio * lh;
 
     const offX = (config.textOffsetX || 0) * scaleFactor;
     const offY = (config.textOffsetY || 0) * scaleFactor;
 
     const textRightX = lx - gapX + offX;
-    const logoCenterY = ly + lh / 2 + offY;
-    const blockHeight = fontSize * 2 + lineGap;
-    let cursorY = logoCenterY - blockHeight / 2 + fontSize;
+    const margin = 0.01 * W;
+    const maxTextWidth = Math.max(20, textRightX - margin);
 
     ctx.textAlign = 'right';
     ctx.direction = 'rtl';
     ctx.fillStyle = TEXT_STYLE.color;
+
     ctx.font = `${fontSize}px Kalameh, Vazirmatn, sans-serif`;
+    const widths = [];
+    if (textLines.title) widths.push(ctx.measureText(textLines.title).width);
+    if (textLines.date) widths.push(ctx.measureText(textLines.date).width);
+    const widestLine = widths.length ? Math.max(...widths) : 0;
+
+    if (widestLine > maxTextWidth) {
+      const shrinkFactor = maxTextWidth / widestLine;
+      fontSize = Math.max(6, fontSize * shrinkFactor);
+      ctx.font = `${fontSize}px Kalameh, Vazirmatn, sans-serif`;
+    }
+
+    const logoCenterY = ly + lh / 2 + offY;
+    const blockHeight = fontSize * 2 + lineGap;
+    let cursorY = logoCenterY - blockHeight / 2 + fontSize;
 
     if (SHADOW_STYLE.enabled) {
       ctx.shadowColor = shadowColor;
@@ -565,7 +818,7 @@ async function loadSampleImage(e) {
   if (!file) return;
   const overlay = document.getElementById('canvasOverlay');
   document.getElementById('previewCard').style.display = 'block';
-  document.getElementById('controlsCard').style.display = 'block';
+  document.getElementById('controlsCard').style.display = 'flex';
   overlay.classList.remove('hidden', 'error');
   overlay.innerText = 'در حال بارگذاری تصویر...';
 
@@ -752,6 +1005,8 @@ async function downloadAll() {
       URL.revokeObjectURL(url);
     }, 5000);
 
+    logDownload(count);
+
   } catch (err) {
     alert('❌ خطا در ساخت فایل ZIP:\n' + err.message);
   } finally {
@@ -760,6 +1015,5 @@ async function downloadAll() {
   }
 }
 </script>
-</div>
 </body>
-  </html>
+</html>

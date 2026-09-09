@@ -761,8 +761,8 @@ function drawComposite(canvas, photoImg, config, scaleFactor, textLines) {
     const offX = (config.textOffsetX || 0) * scaleFactor;
     const offY = (config.textOffsetY || 0) * scaleFactor;
 
-    const textRightX = lx - gapX + offX;
     const margin = 0.01 * W;
+    const textRightX = Math.min(lx - gapX + offX, W - margin);
     const maxTextWidth = Math.max(20, textRightX - margin);
 
     ctx.textAlign = 'right';

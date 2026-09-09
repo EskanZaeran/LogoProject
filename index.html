@@ -771,8 +771,9 @@ function drawComposite(canvas, photoImg, config, scaleFactor, textLines) {
 
     ctx.font = `${fontSize}px Kalameh, Vazirmatn, sans-serif`;
     const widths = [];
-    if (textLines.title) widths.push(ctx.measureText(textLines.title).width);
-    if (textLines.date) widths.push(ctx.measureText(textLines.date).width);
+    const rtlSafe = s => '\u2067' + s + '\u2069';
+    if (textLines.title) widths.push(ctx.measureText(rtlSafe(textLines.title)).width);
+    if (textLines.date) widths.push(ctx.measureText(rtlSafe(textLines.date)).width);
     const widestLine = widths.length ? Math.max(...widths) : 0;
 
     if (widestLine > maxTextWidth) {
@@ -791,11 +792,11 @@ function drawComposite(canvas, photoImg, config, scaleFactor, textLines) {
       ctx.shadowOffsetX = shadowOffX;
       ctx.shadowOffsetY = shadowOffY;
     }
-
-    if (textLines.title) ctx.fillText(textLines.title, textRightX, cursorY);
+    
+    if (textLines.title) ctx.fillText(rtlSafe(textLines.title), textRightX, cursorY);
     if (textLines.date) {
       cursorY += lineGap + fontSize;
-      ctx.fillText(textLines.date, textRightX, cursorY);
+      ctx.fillText(rtlSafe(textLines.date), textRightX, cursorY);
     }
 
     if (SHADOW_STYLE.enabled) {

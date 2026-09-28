@@ -244,8 +244,8 @@
       <button class="tab-btn" onclick="switchTab('preset')" id="tabBtnPreset">ساخت پریست جدید</button>
     </div>
     <div class="profile-picker">
-      <label for="profileSelect">پروفایل</label>
-      <select id="profileSelect" onchange="onProfileChange()">
+      <label for="elect">پروفایل</label>
+      <select id="elect" onchange="onProfileChange()">
         <option value="dual">دو-لوگو (رایامدیا)</option>
         <option value="heyat">هیئت (با متن)</option>
         <option value="janfada">رایا و جان فدا</option>
@@ -399,7 +399,7 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxPH8rrSpLogx_i
 
 const PROFILES = {
   dual:  { name: "دو-لوگو (رایامدیا)", logoPath: "assets/logos/rayamediaa.png", hasText: false },
-  heyat: { name: "هیئت (با متن)",       logoPath: "assets/logos/heyat.png",       hasText: true }
+  heyat: { name: "هیئت (با متن)",       logoPath: "assets/logos/heyat.png",       hasText: true },
   janfada: { name: "رایا و جان فدا",       logoPath: "assets/logos/raya&janfada.png",       hasText: true }
 };
 
@@ -934,7 +934,7 @@ function setupDrag() {
 setupDrag();
 
 async function savePreset() {
-  const name = `$(sampleW)x$(sampleH)`;
+  const name = `${sampleW}x$(sampleH}`;
   const payload = {
     action: 'save', id: 'p_' + Date.now(), profile: currentProfile, presetName: name,
     width: sampleW, height: sampleH,

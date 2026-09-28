@@ -398,9 +398,9 @@
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxPH8rrSpLogx_ihe2FnApnmOZCoA4TdVwAquZSEttOiKdGEUZw1xVFSaWeHj4jseKI8g/exec";
 
 const PROFILES = {
-  dual:  { name: "دو-لوگو (رایامدیا)", logoPath: "assets/logos/rayamediaa.png", : false },
-  heyat: { name: "هیئت (با متن)",       logoPath: "assets/logos/heyat.png",       : true },
-  janfada: { name: "رایا و جان فدا",       logoPath: "assets/logos/raya&janfada.png",       hasText: false }
+  dual:  { name: "دو-لوگو (رایامدیا)", logoPath: "assets/logos/rayamediaa.png",hasText: false },
+  heyat: { name: "هیئت (با متن)",       logoPath: "assets/logos/heyat.png",hasText: true },
+  janfada: { name: "رایا و جان فدا",       logoPath: "assets/logos/raya&janfada.png", hasText: false }
 };
 
 const TEXT_STYLE = {
@@ -936,7 +936,7 @@ function setupDrag() {
 setupDrag();
 
 async function savePreset() {
-  const name = `${sampleW}x$(sampleH}`;
+  const name = `${sampleW}x${sampleH}`;
   const payload = {
     action: 'save', id: 'p_' + Date.now(), profile: currentProfile, presetName: name,
     width: sampleW, height: sampleH,

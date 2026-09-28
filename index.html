@@ -508,23 +508,25 @@ function switchTab(tab) {
 }
 
 function onProfileChange() {
-  currentProfile = document.getElementById('profileSelect').value;
-  uploadedFiles = []; groupedReady = {}; groupedMissing = {};
+  currentProfile = document.getElementById('elect').value;
+
+  uploadedFiles = [];
+  groupedReady = {};
+  groupedMissing = {};
+
   document.getElementById('processStatus').innerHTML = '';
   document.getElementById('missingPresetsWrap').innerHTML = '';
   document.getElementById('readyWrap').innerHTML = '';
   document.getElementById('downloadCard').style.display = 'none';
-  document.getElementById('batchTextCard').style.display = PROFILES[currentProfile].hasText ? 'block' : 'none';
+
+  document.getElementById('batchTextCard').style.display =
+    PROFILES[currentProfile].hasText ? 'block' : 'none';
+
   loadProfileData(currentProfile);
+
   if (sampleImg) redrawPreview();
 }
-
-function onBatchTextChange() {
-  batchText.title = document.getElementById('batchTitleInput').value;
-  batchText.date = document.getElementById('batchDateInput').value;
-  if (uploadedFiles.length) renderReadyPreview();
-}
-
+  
 // ==================== PRESET LOADING (cache + sheet) ====================
 function loadCachedPresets(profileKey) {
   try {

@@ -1,0 +1,2727 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سیستم بچ لوگو</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" id="metaTheme" content="#EEF3F1">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+  :root{
+    /* ---- Emerald & Mist ---- */
+    --bg:#EEF3F1;
+    --surface:#FFFFFF;
+    --surface-2:#F6F9F8;
+    --surface-3:#E7EEEB;
+    --border:#D5E0DB;
+    --border-soft:#E3EBE8;
+    --ink:#0F1F1A;
+    --muted:#5B6B66;
+    --muted-2:#8A9A94;
+
+    --primary:#0B6E4F;
+    --primary-hover:#095A41;
+    --primary-ink:#FFFFFF;
+    --primary-soft:rgba(11,110,79,.10);
+    --mint:#2FBF8F;
+
+    --ok-bg:#E3F5EC; --ok-fg:#0B6E4F; --ok-bd:#BFE6D3;
+    --warn-bg:#FEF3C7; --warn-fg:#92400E; --warn-bd:#F5DC8C;
+    --err-bg:#FEE2E2; --err-fg:#B91C1C; --err-bd:#F5B5B5;
+    --info-bg:#E6F0F7; --info-fg:#1E5A85; --info-bd:#BFD7E8;
+
+    --pa:#0B6E4F; /* accent of the selected profile */
+    --radius:14px;
+    --radius-sm:10px;
+    --shadow:0 1px 2px rgba(15,31,26,.05), 0 10px 28px rgba(15,31,26,.07);
+  }
+  [data-theme="dark"]{
+    --bg:#0B1512;
+    --surface:#111F1B;
+    --surface-2:#162823;
+    --surface-3:#1C3029;
+    --border:#26403A;
+    --border-soft:#1E352F;
+    --ink:#E8F2EE;
+    --muted:#93AAA1;
+    --muted-2:#6B8279;
+
+    --primary:#2FBF8F;
+    --primary-hover:#4AD1A3;
+    --primary-ink:#06241A;
+    --primary-soft:rgba(47,191,143,.14);
+    --mint:#2FBF8F;
+
+    --ok-bg:#12302A; --ok-fg:#5FD9AE; --ok-bd:#1F4D41;
+    --warn-bg:#33290F; --warn-fg:#F0C35A; --warn-bd:#54431A;
+    --err-bg:#3A1717; --err-fg:#F28B8B; --err-bd:#5E2626;
+    --info-bg:#132633; --info-fg:#7FC1EA; --info-bd:#1F4257;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 28px rgba(0,0,0,.35);
+  }
+  *{ box-sizing:border-box; }
+  html,body{ min-height:100%; }
+  body{
+    font-family:'Vazirmatn', Tahoma, Arial, sans-serif;
+    background:var(--bg); color:var(--ink);
+    margin:0; line-height:1.7; -webkit-font-smoothing:antialiased;
+  }
+  a, button, input, select, textarea{ font-family:inherit; }
+  button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, .tab-btn:focus-visible, .pcard:focus-visible{
+    outline:2px solid var(--primary); outline-offset:2px;
+  }
+  ::selection{ background:var(--primary-soft); }
+  .muted{ color:var(--muted); }
+  .small{ font-size:12px; }
+  .ic{ flex:none; vertical-align:middle; }
+
+  @keyframes fadeInUp{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:.35;} }
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; }
+  }
+
+  /* ---------- Entry ---------- */
+  .entry{
+    position:fixed; inset:0; z-index:100; display:flex; align-items:center; justify-content:center; padding:20px;
+    background:
+      radial-gradient(900px 500px at 85% -10%, rgba(47,191,143,.22), transparent 60%),
+      radial-gradient(700px 480px at 0% 110%, rgba(11,110,79,.16), transparent 60%),
+      var(--bg);
+  }
+  .entry-card{
+    width:100%; max-width:400px; background:var(--surface); border:1px solid var(--border-soft);
+    border-radius:22px; padding:34px 28px 26px; text-align:center; box-shadow:var(--shadow);
+    animation:fadeInUp .5s ease both;
+  }
+  .entry-logo{ min-height:92px; display:flex; align-items:center; justify-content:center; margin-bottom:12px; }
+  .entry-logo img{ max-width:180px; max-height:110px; object-fit:contain; }
+  .mono{
+    width:78px; height:78px; border-radius:22px; background:var(--primary); color:var(--primary-ink);
+    align-items:center; justify-content:center; font-size:38px; font-weight:800;
+  }
+  .entry-card h1{ font-size:22px; margin:6px 0 6px; font-weight:800; }
+  .entry-sub{ font-size:13px; color:var(--muted); margin:0 0 22px; }
+  #accessBox{ margin-top:14px; text-align:right; padding-top:14px; border-top:1px dashed var(--border); }
+
+  /* ---------- App shell ---------- */
+  .appbar{
+    position:sticky; top:0; z-index:30;
+    background:color-mix(in srgb, var(--surface) 92%, transparent); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border-soft);
+  }
+  .appbar-inner{
+    max-width:1180px; margin:0 auto; padding:10px 18px;
+    display:flex; flex-wrap:wrap; align-items:center; gap:12px; justify-content:space-between;
+  }
+  .brand{ display:flex; align-items:center; gap:10px; font-size:16px; font-weight:800; }
+  .brand img{ height:34px; max-width:90px; object-fit:contain; }
+  .brand .mark{ width:10px; height:10px; border-radius:3px; background:var(--primary); box-shadow:0 0 0 3px var(--primary-soft); }
+  .tabs{ display:flex; gap:4px; background:var(--surface-2); padding:4px; border-radius:11px; border:1px solid var(--border-soft); }
+  .tab-btn{
+    padding:7px 16px; background:transparent; color:var(--muted); border:none; border-radius:8px;
+    cursor:pointer; font-size:13.5px; font-weight:600; transition:background .18s, color .18s; white-space:nowrap;
+  }
+  .tab-btn:hover{ color:var(--ink); }
+  .tab-btn.active{ background:var(--primary); color:var(--primary-ink); }
+  .hdr-actions{ display:flex; align-items:center; gap:8px; }
+  .icon-btn{
+    width:36px; height:36px; padding:0; display:inline-flex; align-items:center; justify-content:center;
+    background:var(--surface-2); color:var(--ink); border:1px solid var(--border); border-radius:10px; cursor:pointer;
+  }
+  .icon-btn:hover{ background:var(--surface-3); }
+  .role{ font-size:11.5px; font-weight:700; padding:3px 10px; border-radius:999px; background:var(--primary-soft); color:var(--primary); }
+  .conn{ display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:600; padding:4px 10px; border-radius:999px; border:1px solid var(--border); background:var(--surface-2); color:var(--muted); }
+  .conn .dot{ width:8px; height:8px; border-radius:50%; background:var(--muted-2); }
+  .conn.ok .dot{ background:#22A06B; }
+  .conn.sync .dot{ background:#E0A100; animation:pulse 1s infinite; }
+  .conn.off .dot{ background:#D64545; }
+
+  .annbar{ padding:9px 18px; font-size:13px; font-weight:600; text-align:center; border-bottom:1px solid transparent; }
+  .annbar.info{ background:var(--info-bg); color:var(--info-fg); border-color:var(--info-bd); }
+  .annbar.warn{ background:var(--warn-bg); color:var(--warn-fg); border-color:var(--warn-bd); }
+  .annbar.ok{ background:var(--ok-bg); color:var(--ok-fg); border-color:var(--ok-bd); }
+
+  main.shell{ max-width:1180px; margin:0 auto; padding:22px 18px 40px; }
+  footer.foot{ max-width:1180px; margin:0 auto; padding:6px 18px 40px; font-size:12px; color:var(--muted); display:flex; gap:12px; flex-wrap:wrap; justify-content:space-between; }
+  footer.foot button{ background:none; border:none; color:var(--primary); font-size:12px; font-weight:700; padding:0; cursor:pointer; }
+
+  /* ---------- Form controls ---------- */
+  select, input[type=text], input[type=number], input[type=password], textarea{
+    width:100%; padding:10px 13px; background:var(--surface); color:var(--ink);
+    border:1px solid var(--border); border-radius:10px; font-size:14px; transition:border-color .2s, box-shadow .2s;
+  }
+  textarea{ resize:vertical; min-height:80px; }
+  select{
+    appearance:none; -webkit-appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238A9A94' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:left 13px center; padding-left:30px;
+  }
+  select:focus, input:focus, textarea:focus{ outline:none; border-color:var(--primary); box-shadow:0 0 0 3px var(--primary-soft); }
+  input::placeholder, textarea::placeholder{ color:var(--muted-2); }
+  input[type=file]{
+    width:100%; color:var(--muted); font-size:13px; padding:11px; background:var(--surface-2);
+    border:1.5px dashed var(--border); border-radius:10px; cursor:pointer;
+  }
+  input[type=file]::file-selector-button{
+    background:var(--surface); color:var(--ink); border:1px solid var(--border); border-radius:7px;
+    padding:6px 12px; margin-left:10px; font-size:12.5px; font-weight:600; cursor:pointer;
+  }
+  input[type=color]{ width:46px; height:38px; padding:2px; border:1px solid var(--border); border-radius:10px; background:var(--surface); cursor:pointer; }
+  label{ display:block; font-size:12.5px; color:var(--muted); margin-bottom:6px; font-weight:600; }
+  .field{ margin-bottom:12px; }
+  .chk{ display:flex; align-items:center; gap:8px; font-size:13px; color:var(--ink); font-weight:600; margin:0; cursor:pointer; }
+  .chk input{ width:16px; height:16px; accent-color:var(--primary); }
+
+  button{
+    padding:10px 18px; background:var(--primary); color:var(--primary-ink); border:none; border-radius:11px;
+    cursor:pointer; font-size:14px; font-weight:700; transition:background .15s, transform .1s;
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  }
+  button:hover{ background:var(--primary-hover); }
+  button:active{ transform:scale(.99); }
+  button.secondary{ background:var(--surface); border:1px solid var(--border); color:var(--ink); }
+  button.secondary:hover{ background:var(--surface-3); }
+  button.danger{ background:var(--err-bg); color:var(--err-fg); border:1px solid var(--err-bd); }
+  button.danger:hover{ filter:brightness(.97); }
+  button.linkbtn{ background:none; color:var(--primary); padding:8px; font-size:13px; }
+  button.linkbtn:hover{ background:var(--primary-soft); }
+  button.sm{ padding:6px 12px; font-size:12.5px; border-radius:9px; }
+  button:disabled{ background:var(--surface-3); color:var(--muted-2); cursor:not-allowed; border-color:transparent; }
+  button.block{ width:100%; }
+  .btn-row{ display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+
+  .panel{
+    background:var(--surface); border:1px solid var(--border-soft); border-radius:var(--radius);
+    padding:18px; box-shadow:var(--shadow); margin-bottom:16px; animation:fadeInUp .35s ease both;
+  }
+  .ptitle{ font-size:15px; font-weight:800; margin:0 0 4px; }
+  .psub{ font-size:12.5px; color:var(--muted); margin:0 0 14px; }
+
+  .status{ font-size:13px; padding:10px 12px; border-radius:10px; font-weight:600; margin-top:10px; border:1px solid transparent; }
+  .status.ok{ background:var(--ok-bg); color:var(--ok-fg); border-color:var(--ok-bd); }
+  .status.warn{ background:var(--warn-bg); color:var(--warn-fg); border-color:var(--warn-bd); }
+  .status.err{ background:var(--err-bg); color:var(--err-fg); border-color:var(--err-bd); }
+  .status.info{ background:var(--info-bg); color:var(--info-fg); border-color:var(--info-bd); }
+
+  /* ---------- Stepper ---------- */
+  .stepper{ display:flex; align-items:center; gap:0; margin:0 0 20px; }
+  .st{ display:flex; align-items:center; gap:10px; flex:1; min-width:0; }
+  .st-dot{
+    width:30px; height:30px; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center;
+    font-size:13px; font-weight:800; background:var(--surface); border:2px solid var(--border); color:var(--muted);
+  }
+  .st-label{ font-size:13px; font-weight:700; color:var(--muted); white-space:nowrap; }
+  .st-line{ flex:1; height:2px; background:var(--border); margin:0 10px; border-radius:2px; min-width:14px; }
+  .st.done .st-dot{ background:var(--primary); border-color:var(--primary); color:var(--primary-ink); }
+  .st.done .st-label{ color:var(--ink); }
+  .st.on .st-dot{ border-color:var(--primary); color:var(--primary); box-shadow:0 0 0 4px var(--primary-soft); }
+  .st.on .st-label{ color:var(--ink); }
+  .st.clickable{ cursor:pointer; }
+  .st:last-child{ flex:none; }
+
+  /* ---------- Profile cards ---------- */
+  .pcards{ display:grid; grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:10px; }
+  .pcard{
+    position:relative; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:8px;
+    padding:14px 10px 12px; background:var(--surface); color:var(--ink); border:1.5px solid var(--border);
+    border-radius:14px; border-top:4px solid var(--pa); cursor:pointer; text-align:center;
+  }
+  .pcard:hover{ background:var(--surface-2); }
+  .pcard.on{ border-color:var(--pa); box-shadow:0 0 0 3px color-mix(in srgb, var(--pa) 18%, transparent); background:var(--surface); }
+  .pthumb{ width:100%; height:54px; display:flex; align-items:center; justify-content:center; background:var(--surface-3); border-radius:9px; overflow:hidden; }
+  .pthumb img{ max-width:88%; max-height:44px; object-fit:contain; }
+  .pname{ font-size:12.5px; font-weight:700; line-height:1.5; }
+  .ptag{ font-size:10.5px; font-weight:700; padding:1px 8px; border-radius:999px; background:var(--surface-3); color:var(--muted); }
+
+  /* ---------- Dropzone / progress ---------- */
+  .dropzone{
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; text-align:center;
+    padding:34px 18px; border:2px dashed var(--border); border-radius:16px; background:var(--surface-2);
+    color:var(--muted); cursor:pointer; transition:border-color .2s, background .2s; margin:0;
+  }
+  .dropzone:hover, .dropzone.drag{ border-color:var(--primary); background:var(--primary-soft); color:var(--ink); }
+  .dropzone b{ color:var(--ink); font-size:14.5px; }
+  .progress{ height:8px; background:var(--surface-3); border-radius:999px; overflow:hidden; }
+  .progress i{ display:block; height:100%; width:0; background:var(--primary); border-radius:999px; transition:width .2s; }
+  .prog-label{ font-size:12px; color:var(--muted); margin-top:6px; display:flex; justify-content:space-between; }
+
+  /* ---------- Before/After ---------- */
+  .ba{ position:relative; direction:ltr; width:100%; border-radius:12px; overflow:hidden; border:1px solid var(--border); background:var(--surface-3); touch-action:none; }
+  .ba canvas{ width:100%; display:block; }
+  .ba canvas.ba-a{ position:absolute; inset:0; height:100%; }
+  .ba-h{ position:absolute; top:0; bottom:0; width:2px; background:#fff; box-shadow:0 0 0 1px rgba(0,0,0,.35); pointer-events:none; }
+  .ba-ctl{ display:flex; align-items:center; gap:10px; margin-top:10px; font-size:12px; color:var(--muted); font-weight:600; }
+  .ba-ctl input{ flex:1; }
+  input[type=range]{
+    width:100%; height:4px; display:block; appearance:none; -webkit-appearance:none;
+    background:var(--surface-3); border-radius:999px; accent-color:var(--primary);
+  }
+  input[type=range]::-webkit-slider-thumb{
+    appearance:none; -webkit-appearance:none; width:18px; height:18px; border-radius:50%;
+    background:var(--primary); border:3px solid var(--surface); box-shadow:0 0 0 1px var(--border); cursor:pointer; margin-top:-7px;
+  }
+  input[type=range]::-moz-range-thumb{ width:18px; height:18px; border-radius:50%; border:3px solid var(--surface); background:var(--primary); box-shadow:0 0 0 1px var(--border); cursor:pointer; }
+  input[type=range]::-webkit-slider-runnable-track{ height:4px; border-radius:999px; background:var(--surface-3); }
+  input[type=range]::-moz-range-track{ height:4px; border-radius:999px; background:var(--surface-3); }
+
+  .sample-grid{ display:grid; grid-template-columns:1fr; gap:16px; }
+  @media (min-width:900px){ .sample-grid{ grid-template-columns:1.4fr 1fr; align-items:start; } }
+  .kv{ display:grid; grid-template-columns:auto 1fr; gap:6px 14px; font-size:13px; margin:12px 0; }
+  .kv span:nth-child(odd){ color:var(--muted); }
+  .kv span:nth-child(even){ font-weight:700; }
+
+  /* ---------- Review ---------- */
+  .chips{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+  .chip{ display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; padding:5px 12px; border-radius:999px; border:1px solid var(--border); background:var(--surface-2); }
+  .chip.ok{ background:var(--ok-bg); color:var(--ok-fg); border-color:var(--ok-bd); }
+  .chip.warn{ background:var(--warn-bg); color:var(--warn-fg); border-color:var(--warn-bd); }
+  .chip.err{ background:var(--err-bg); color:var(--err-fg); border-color:var(--err-bd); }
+  .seg{ display:inline-flex; background:var(--surface-2); border:1px solid var(--border-soft); border-radius:10px; padding:3px; gap:2px; }
+  .seg button{ background:transparent; color:var(--muted); padding:5px 14px; font-size:12.5px; border-radius:8px; }
+  .seg button:hover{ color:var(--ink); background:transparent; }
+  .seg button.on{ background:var(--primary); color:var(--primary-ink); }
+  .rev-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
+  .tiles{ display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:12px; }
+  .tile{
+    position:relative; background:var(--surface); border:1.5px solid var(--border-soft); border-radius:12px; padding:8px;
+    cursor:pointer; display:flex; flex-direction:column; gap:6px; transition:border-color .15s, transform .12s;
+  }
+  .tile:hover{ border-color:var(--muted-2); transform:translateY(-1px); }
+  .tile.sel{ border-color:var(--primary); }
+  .tile.warn{ border-color:var(--warn-bd); }
+  .tile.error{ border-color:var(--err-fg); }
+  .tile canvas{ width:100%; display:block; border-radius:8px; background:var(--surface-3); }
+  .tile-meta{ display:flex; justify-content:space-between; align-items:center; gap:6px; font-size:11.5px; color:var(--muted); }
+  .tile-name{ font-size:11.5px; color:var(--ink); font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; direction:ltr; text-align:right; }
+  .q-badge{ position:absolute; top:14px; inset-inline-start:14px; width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; box-shadow:0 2px 6px rgba(0,0,0,.25); }
+  .q-badge.ok{ background:#22A06B; color:#fff; }
+  .q-badge.warn{ background:#E0A100; color:#fff; }
+  .q-badge.error{ background:#D64545; color:#fff; }
+  .ack-mark{ color:var(--ok-fg); display:inline-flex; align-items:center; gap:3px; font-weight:700; }
+  .badge{ padding:1px 8px; border-radius:999px; font-size:11px; font-weight:700; background:var(--surface-3); color:var(--muted); white-space:nowrap; }
+  .badge.ovr{ background:var(--primary-soft); color:var(--primary); }
+
+  /* ---------- Modal ---------- */
+  .modal{ position:fixed; inset:0; z-index:90; background:rgba(8,18,14,.62); display:flex; align-items:center; justify-content:center; padding:14px; }
+  .modal-card{ width:100%; max-width:1000px; max-height:94vh; overflow:auto; background:var(--surface); border-radius:18px; border:1px solid var(--border-soft); box-shadow:var(--shadow); padding:18px; }
+  .modal-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:12px; }
+  .m-nav{ display:flex; gap:6px; }
+  .modal-body{ display:grid; grid-template-columns:1fr; gap:16px; }
+  @media (min-width:860px){ .modal-body{ grid-template-columns:1.3fr 1fr; align-items:start; } }
+  .issue{ display:flex; gap:10px; padding:10px 12px; border-radius:10px; font-size:13px; font-weight:600; margin-bottom:8px; border:1px solid transparent; }
+  .issue.warn{ background:var(--warn-bg); color:var(--warn-fg); border-color:var(--warn-bd); }
+  .issue.error{ background:var(--err-bg); color:var(--err-fg); border-color:var(--err-bd); }
+  .issue.ok{ background:var(--ok-bg); color:var(--ok-fg); border-color:var(--ok-bd); }
+  .tweak{ margin-top:14px; padding:14px; border:1px dashed var(--border); border-radius:12px; background:var(--surface-2); }
+  .slider-row{ margin-bottom:14px; }
+  .slider-row:last-child{ margin-bottom:0; }
+  .slider-label{ display:flex; justify-content:space-between; font-size:12.5px; color:var(--muted); margin-bottom:8px; font-weight:600; }
+  .slider-label span:last-child{ color:var(--ink); font-weight:700; font-variant-numeric:tabular-nums; }
+
+  /* ---------- Download ---------- */
+  .stat-row{ display:grid; grid-template-columns:repeat(auto-fit, minmax(130px,1fr)); gap:10px; margin:14px 0; }
+  .stat{ background:var(--surface-2); border:1px solid var(--border-soft); border-radius:12px; padding:12px 14px; }
+  .stat b{ display:block; font-size:22px; font-weight:800; line-height:1.3; }
+  .stat span{ font-size:12px; color:var(--muted); }
+
+  /* ---------- Admin ---------- */
+  .adm-top{ display:flex; align-items:end; gap:14px; flex-wrap:wrap; margin-bottom:14px; }
+  .adm-top .field{ margin:0; min-width:220px; }
+  .adm-nav{ display:flex; gap:6px; flex-wrap:wrap; margin-bottom:16px; }
+  .adm-nav button{ background:var(--surface); color:var(--muted); border:1px solid var(--border); padding:7px 14px; font-size:13px; font-weight:700; border-radius:999px; }
+  .adm-nav button:hover{ color:var(--ink); background:var(--surface-2); }
+  .adm-nav button.on{ background:var(--primary); color:var(--primary-ink); border-color:var(--primary); }
+  .adm-nav .cnt{ background:var(--err-fg); color:#fff; border-radius:999px; font-size:10.5px; padding:0 6px; margin-inline-start:4px; }
+  .adm-sec{ display:none; }
+  .adm-sec.on{ display:block; }
+  .step{
+    background:var(--surface); border:1px solid var(--border-soft); border-radius:var(--radius-sm);
+    padding:16px; border-right:3px solid var(--primary); margin-bottom:16px; box-shadow:var(--shadow);
+  }
+  .step-head{ display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+  .step-num{ min-width:24px; height:24px; padding:0 4px; border-radius:50%; flex:none; background:var(--primary-soft); color:var(--primary); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; }
+  .step-title{ font-size:13.5px; font-weight:700; }
+  .canvas-hint{ font-size:12px; color:var(--muted-2); text-align:center; margin-top:8px; }
+  .canvas-wrap{
+    position:relative; width:100%; overflow:hidden; border-radius:12px; touch-action:none; border:1px solid var(--border-soft);
+    background:repeating-conic-gradient(var(--surface-3) 0% 25%, var(--surface-2) 0% 50%) 0 0/18px 18px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .canvas-wrap canvas{ width:100%; display:block; cursor:grab; touch-action:none; }
+  .preset-grid{ display:grid; grid-template-columns:1fr; gap:16px; }
+  @media (min-width:980px){ .preset-grid{ grid-template-columns:1fr 380px; align-items:start; } }
+  .steps-col{ display:flex; flex-direction:column; }
+  .ready-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:10px; flex-wrap:wrap; }
+  .ready-header .count{ font-size:12px; color:var(--muted); background:var(--surface-3); padding:4px 10px; border-radius:999px; }
+  table.tbl{ width:100%; border-collapse:collapse; font-size:13px; }
+  table.tbl th, table.tbl td{ text-align:right; padding:9px 10px; border-bottom:1px solid var(--border-soft); vertical-align:middle; }
+  table.tbl th{ color:var(--muted); font-size:12px; font-weight:700; }
+  .bar-row{ display:flex; align-items:center; gap:10px; font-size:12.5px; margin:7px 0; }
+  .bar-row .lbl{ width:92px; flex:none; color:var(--muted); font-weight:600; direction:ltr; text-align:right; }
+  .bar-row .bar{ flex:1; height:10px; background:var(--surface-3); border-radius:999px; overflow:hidden; }
+  .bar-row .bar i{ display:block; height:100%; background:var(--primary); border-radius:999px; }
+  .bar-row .val{ width:44px; text-align:left; font-weight:700; }
+  .cols2{ display:grid; grid-template-columns:1fr; gap:16px; }
+  @media (min-width:860px){ .cols2{ grid-template-columns:1fr 1fr; } }
+  .health-item{ display:flex; gap:10px; align-items:flex-start; padding:10px 0; border-bottom:1px solid var(--border-soft); font-size:13px; }
+  .health-item:last-child{ border-bottom:none; }
+  .health-item .ok{ color:#22A06B; } .health-item .bad{ color:#D64545; } .health-item .mid{ color:#E0A100; }
+  .prof-row{ display:grid; grid-template-columns:1fr; gap:10px; padding:14px 0; border-bottom:1px solid var(--border-soft); }
+  .prof-row:last-child{ border-bottom:none; }
+  @media (min-width:760px){ .prof-row{ grid-template-columns:1.2fr 1fr auto auto auto; align-items:end; } }
+  .report-sheet h3{ margin:0 0 4px; font-size:18px; }
+
+  #toast{
+    position:fixed; bottom:22px; inset-inline-start:50%; transform:translateX(50%); z-index:120;
+    background:var(--ink); color:var(--surface); padding:10px 18px; border-radius:12px; font-size:13px; font-weight:600;
+    box-shadow:var(--shadow); display:none;
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:759px){
+    .appbar-inner{ padding:10px 14px; }
+    main.shell{ padding:16px 14px 30px; }
+    .st-label{ display:none; }
+    .st.on .st-label{ display:inline; }
+    .brand span:not(.mark){ font-size:14px; }
+  }
+
+  /* ---------- Print (monthly report) ---------- */
+  @media print{
+    body.print-report .appbar, body.print-report #annBar, body.print-report #entry, body.print-report #tabProcess,
+    body.print-report .adm-top, body.print-report .adm-nav, body.print-report .adm-sec:not(#adm-monthly),
+    body.print-report .no-print, body.print-report footer, body.print-report #toast{ display:none !important; }
+    body.print-report{ background:#fff; color:#000; }
+    body.print-report .panel{ box-shadow:none; border:none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= ENTRY ================= -->
+<div id="entry" class="entry" style="display:none;">
+  <div class="entry-card">
+    <div class="entry-logo">
+      <img id="entryLogo" src="assets/logos/login-logo.png" alt="" onerror="this.style.display='none'; document.getElementById('entryMono').style.display='flex';">
+      <div id="entryMono" class="mono" style="display:none;">ب</div>
+    </div>
+    <h1>سیستم بچ لوگو</h1>
+    <p class="entry-sub">درج یکپارچه‌ی لوگو و متن روی عکس‌ها، با کنترل کیفیت پیش از دانلود</p>
+    <button class="block" onclick="enterGuest()">ورود به سیستم</button>
+    <button class="linkbtn block" onclick="toggleAccess()">ورود اپراتور / ادمین</button>
+    <div id="accessBox" style="display:none;">
+      <div class="field">
+        <label for="accessRole">سطح دسترسی</label>
+        <select id="accessRole">
+          <option value="operator">اپراتور</option>
+          <option value="admin">ادمین</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="accessPass">رمز</label>
+        <input type="password" id="accessPass" onkeydown="if(event.key==='Enter') submitAccess()">
+      </div>
+      <button class="block" onclick="submitAccess()">ورود</button>
+      <div id="accessMsg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= HEADER ================= -->
+<header class="appbar" id="appbar" style="display:none;">
+  <div class="appbar-inner">
+    <div class="brand">
+      <img id="brandLogo" src="assets/logos/login-logo.png" alt="" onerror="this.style.display='none'; document.getElementById('brandMark').style.display='inline-block';">
+      <span class="mark" id="brandMark" style="display:none;"></span>
+      <span>سیستم بچ لوگو</span>
+    </div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('process')" id="tabBtnProcess">پردازش عکس‌ها</button>
+      <button class="tab-btn" onclick="switchTab('admin')" id="tabBtnAdmin" style="display:none;">مدیریت</button>
+    </div>
+    <div class="hdr-actions">
+      <span id="connPill" class="conn ok"></span>
+      <span id="roleBadge" class="role"></span>
+      <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" title="تغییر تم"></button>
+      <button class="icon-btn" id="logoutBtn" onclick="logout()" title="خروج"></button>
+    </div>
+  </div>
+</header>
+<div id="annBar" class="annbar" style="display:none;"></div>
+
+<main class="shell" id="shell" style="display:none;">
+
+<!-- ================= PROCESS ================= -->
+<div id="tabProcess">
+  <div class="stepper" id="stepper"></div>
+
+  <!-- Step 1 -->
+  <section id="step1">
+    <div class="panel">
+      <h2 class="ptitle">پروفایل</h2>
+      <p class="psub">لوگو و قوانین جای‌گذاری بر اساس پروفایل انتخابی اعمال می‌شود.</p>
+      <div id="profileCards" class="pcards"></div>
+    </div>
+
+    <div class="panel" id="batchTextCard" style="display:none;">
+      <h2 class="ptitle">متن بنر</h2>
+      <p class="psub">برای همه‌ی عکس‌های این دسته اعمال می‌شود.</p>
+      <div class="field">
+        <label for="batchTitleInput">متن عنوان (خط اول)</label>
+        <input type="text" id="batchTitleInput" placeholder="مثلاً: مراسم عزاداری دهه آخر ماه صفر" oninput="onBatchTextChange()">
+      </div>
+      <div class="field" style="margin-bottom:0;">
+        <label for="batchDateInput">متن تاریخ (خط دوم)</label>
+        <input type="text" id="batchDateInput" placeholder="مثلاً: ۲۲ مرداد ۱۴۰۵" oninput="onBatchTextChange()">
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 class="ptitle">آپلود عکس‌ها</h2>
+      <p class="psub">عکس‌ها فقط داخل مرورگر پردازش می‌شوند.</p>
+      <label class="dropzone" id="dropzone" for="fileInput">
+        <span id="dzIcon"></span>
+        <b>عکس‌ها را اینجا رها کنید یا برای انتخاب بزنید</b>
+        <span class="small">می‌توانید عکس را از کلیپ‌بورد هم Paste کنید</span>
+      </label>
+      <input type="file" id="fileInput" accept="image/*" multiple hidden>
+      <div id="loadWrap" style="display:none; margin-top:14px;">
+        <div class="progress"><i id="loadBar"></i></div>
+        <div class="prog-label"><span>در حال بارگذاری عکس‌ها...</span><span id="loadLabel"></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step 2 -->
+  <section id="step2" style="display:none;">
+    <div id="samplePanel" class="panel">
+      <h2 class="ptitle">نمونه‌ی اول</h2>
+      <p class="psub">پیش از بررسی کل دسته، چینش روی عکس اول را تایید کنید.</p>
+      <div class="sample-grid">
+        <div>
+          <div class="ba" id="sampleBA"><canvas class="ba-b"></canvas><canvas class="ba-a"></canvas><div class="ba-h"></div></div>
+          <div class="ba-ctl"><span>قبل</span><input type="range" class="ba-range" min="0" max="100" value="100"><span>بعد</span></div>
+        </div>
+        <div>
+          <div class="kv" id="sampleInfo"></div>
+          <div id="sampleIssues"></div>
+          <div class="btn-row">
+            <button onclick="confirmSample()" id="sampleOk"></button>
+            <button class="secondary" onclick="goStep(1)">بازگشت</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="reviewPanel" style="display:none;">
+      <div class="panel">
+        <div class="rev-head">
+          <div>
+            <h2 class="ptitle" style="margin:0;">بررسی نهایی</h2>
+            <p class="psub" style="margin:2px 0 0;">عکس‌هایی که مشکل دارند اول لیست آمده‌اند؛ روی هر عکس بزنید تا جزئیات را ببینید.</p>
+          </div>
+          <div class="seg">
+            <button id="fltAll" onclick="setFilter('all')" class="on">همه</button>
+            <button id="fltIssues" onclick="setFilter('issues')">فقط مشکل‌دارها</button>
+          </div>
+        </div>
+        <div class="chips" id="revSummary"></div>
+        <div class="tiles" id="revTiles"></div>
+        <div class="btn-row">
+          <button onclick="goStep(3)" id="toStep3"></button>
+          <button class="secondary" onclick="goStep(1)">بازگشت</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step 3 -->
+  <section id="step3" style="display:none;">
+    <div class="panel" id="dlPanel"></div>
+  </section>
+</div>
+
+<!-- ================= ADMIN ================= -->
+<div id="tabAdmin" style="display:none;">
+  <div class="adm-top">
+    <div class="field">
+      <label for="admProfile">پروفایل در حال مدیریت</label>
+      <select id="admProfile" onchange="selectProfile(this.value)"></select>
+    </div>
+  </div>
+  <nav class="adm-nav" id="admNav"></nav>
+
+  <!-- rules -->
+  <section class="adm-sec" id="adm-rules">
+    <div class="step">
+      <div class="step-head"><span class="step-num">۱</span><span class="step-title">تصاویر تست</span></div>
+      <div class="canvas-hint" style="text-align:right; margin:0 0 10px;">نسبت‌های رایج خودکار ساخته می‌شوند. عکس واقعی با ابعاد دلخواه هم می‌توانید اضافه کنید.</div>
+      <input type="file" id="adminFileInput" accept="image/*" multiple>
+      <div class="btn-row">
+        <button class="secondary" onclick="addCommonRatios()">نسبت‌های رایج</button>
+        <button class="secondary" onclick="clearAdminImages()">پاک کردن تصاویر تست</button>
+        <label class="chk" style="margin-inline-start:8px;"><input type="checkbox" id="admSafe" onchange="renderAdmin()"> نمایش ناحیه‌ی امن (تقریبی)</label>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-head"><span class="step-num">۲</span><span class="step-title">قانون پیش‌فرض (پایین‌راست)</span></div>
+      <div class="slider-row">
+        <div class="slider-label"><span>اندازه لوگو (درصد ضلع کوتاه‌تر)</span><span id="defSizeVal"></span></div>
+        <input type="range" id="defSize" min="3" max="40" step="0.5" value="12" oninput="onDefChange()">
+      </div>
+      <div class="slider-row">
+        <div class="slider-label"><span>فاصله از راست</span><span id="defMxVal"></span></div>
+        <input type="range" id="defMx" min="0" max="15" step="0.5" value="3" oninput="onDefChange()">
+      </div>
+      <div class="slider-row">
+        <div class="slider-label"><span>فاصله از پایین</span><span id="defMyVal"></span></div>
+        <input type="range" id="defMy" min="0" max="15" step="0.5" value="3" oninput="onDefChange()">
+      </div>
+      <div class="slider-row" id="defTextRow">
+        <div class="slider-label"><span>سایز متن (مستقل از لوگو)</span><span id="defTextVal"></span></div>
+        <input type="range" id="defText" min="50" max="200" value="100" oninput="onDefChange()">
+      </div>
+      <div class="slider-row">
+        <div class="slider-label"><span>وینیت دور تصویر</span><span id="defVigVal"></span></div>
+        <input type="range" id="defVig" min="0" max="100" value="0" oninput="onDefChange()">
+      </div>
+      <div class="btn-row"><button onclick="saveDefaultRule()">ذخیره قانون پیش‌فرض</button></div>
+      <div id="defStatus"></div>
+    </div>
+
+    <div class="panel">
+      <div class="step-head"><span class="step-num">۳</span><span class="step-title">نتیجه روی ابعاد مختلف — روی هر کدام بزنید تا اصلاحش کنید</span></div>
+      <div id="adminGrid"></div>
+    </div>
+
+    <div id="adminEditor" style="display:none;">
+      <div class="preset-grid">
+        <div>
+          <div class="panel">
+            <div class="ready-header"><b id="edTitle"></b><span class="count" id="edBadge"></span></div>
+            <div class="canvas-wrap"><canvas id="edCanvas"></canvas></div>
+            <div class="canvas-hint">لوگو را بکشید و جای درست را نشان بدهید</div>
+          </div>
+        </div>
+        <div class="steps-col">
+          <div class="step">
+            <div class="step-head"><span class="step-num">✎</span><span class="step-title">اندازه و جای متن</span></div>
+            <div class="slider-row">
+              <div class="slider-label"><span>اندازه لوگو</span><span id="edSizeVal"></span></div>
+              <input type="range" id="edSize" min="2" max="60" step="0.5" value="12" oninput="onEdChange()">
+            </div>
+            <div class="slider-row ed-text-row">
+              <div class="slider-label"><span>افست X متن</span><span id="edTxtXVal"></span></div>
+              <input type="range" id="edTxtX" min="-50" max="50" step="0.5" value="0" oninput="onEdChange()">
+            </div>
+            <div class="slider-row ed-text-row">
+              <div class="slider-label"><span>افست Y متن</span><span id="edTxtYVal"></span></div>
+              <input type="range" id="edTxtY" min="-50" max="50" step="0.5" value="0" oninput="onEdChange()">
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-head"><span class="step-num">✓</span><span class="step-title">ثبت اصلاح</span></div>
+            <button class="block" onclick="saveOverride()">این چینش برای این نسبت (و نسبت‌های نزدیکش) درست است</button>
+            <div class="btn-row"><button class="secondary block" onclick="removeOverride()">برگشت به قانون پیش‌فرض</button></div>
+            <div id="edStatus"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- reports -->
+  <section class="adm-sec" id="adm-reports">
+    <div class="panel">
+      <h2 class="ptitle">گزارش‌های کاربران (چینش اشتباه)</h2>
+      <p class="psub">با زدن هر ابعاد، یک تصویر تست با همان نسبت در بخش «قوانین و آزمایش» باز می‌شود. بعد از ثبت اصلاح، گزارش از لیست حذف می‌شود.</p>
+      <div id="reportsList"></div>
+    </div>
+  </section>
+
+  <!-- dashboard -->
+  <section class="adm-sec" id="adm-dashboard">
+    <div class="panel">
+      <div class="rev-head">
+        <div><h2 class="ptitle" style="margin:0;">داشبورد استفاده</h2><p class="psub" style="margin:2px 0 0;">۳۰ روز گذشته، همه‌ی پروفایل‌ها</p></div>
+        <button class="secondary sm" onclick="renderDashboard()" id="dashRefresh"></button>
+      </div>
+      <div id="dashBody"></div>
+    </div>
+  </section>
+
+  <!-- monthly -->
+  <section class="adm-sec" id="adm-monthly">
+    <div class="panel report-sheet" id="reportSheet">
+      <div class="rev-head no-print">
+        <div><h2 class="ptitle" style="margin:0;">گزارش ماهانه</h2></div>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+          <select id="monthSel" onchange="renderMonthly()" style="min-width:170px;"></select>
+          <button class="secondary sm" onclick="printReport()" id="printBtn"></button>
+        </div>
+      </div>
+      <div id="monthBody"></div>
+    </div>
+  </section>
+
+  <!-- history -->
+  <section class="adm-sec" id="adm-history">
+    <div class="panel">
+      <div class="rev-head">
+        <div><h2 class="ptitle" style="margin:0;">تاریخچه‌ی تغییرات</h2><p class="psub" style="margin:2px 0 0;">برای هر نسخه می‌توانید قانون را به همان حالت برگردانید.</p></div>
+        <button class="secondary sm" onclick="exportBackup()" id="backupBtn"></button>
+      </div>
+      <div id="historyBody"></div>
+      <div id="historyStatus"></div>
+    </div>
+  </section>
+
+  <!-- profiles -->
+  <section class="adm-sec" id="adm-profiles">
+    <div class="panel">
+      <h2 class="ptitle">مدیریت پروفایل‌ها</h2>
+      <p class="psub">نام، رنگ شاخص و نمایش یا مخفی بودن هر پروفایل. فایل لوگوها همچنان داخل پوشه‌ی <span dir="ltr">assets/logos</span> است.</p>
+      <div id="profilesBody"></div>
+      <div id="profilesStatus"></div>
+    </div>
+  </section>
+
+  <!-- announce -->
+  <section class="adm-sec" id="adm-announce">
+    <div class="panel">
+      <h2 class="ptitle">اطلاعیه‌ی ادمین</h2>
+      <p class="psub">این پیام به‌صورت یک نوار بالای صفحه برای همه‌ی کاربران نمایش داده می‌شود.</p>
+      <div class="field"><label for="annText">متن اطلاعیه</label><textarea id="annText" placeholder="مثلاً: لوگوی جدید محبان اضافه شد."></textarea></div>
+      <div class="cols2">
+        <div class="field"><label for="annLevel">نوع</label>
+          <select id="annLevel"><option value="info">اطلاع‌رسانی</option><option value="ok">خبر خوب</option><option value="warn">هشدار</option></select>
+        </div>
+        <div class="field" style="display:flex; align-items:flex-end;"><label class="chk"><input type="checkbox" id="annActive"> نمایش داده شود</label></div>
+      </div>
+      <div class="btn-row"><button onclick="saveAnnounce()">ذخیره اطلاعیه</button></div>
+      <div id="annStatus"></div>
+    </div>
+  </section>
+
+  <!-- health -->
+  <section class="adm-sec" id="adm-health">
+    <div class="panel">
+      <div class="rev-head">
+        <div><h2 class="ptitle" style="margin:0;">سلامت سیستم</h2><p class="psub" style="margin:2px 0 0;">بررسی خودکار لوگوها، فونت، اتصال به شیت و قوانین ذخیره‌شده</p></div>
+        <button class="secondary sm" onclick="runHealth()" id="healthBtn"></button>
+      </div>
+      <div id="healthBody"></div>
+    </div>
+  </section>
+</div>
+
+</main>
+
+<footer class="foot" id="appFooter" style="display:none;">
+  <span id="footInfo"></span>
+  <button onclick="openGuide()">راهنمای استفاده</button>
+</footer>
+
+<!-- ================= MODAL: image detail ================= -->
+<div id="modal" class="modal" style="display:none;">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div><b id="mTitle"></b><div class="muted small" id="mSub"></div></div>
+      <div class="m-nav">
+        <button class="secondary sm" id="mPrev">قبلی</button>
+        <button class="secondary sm" id="mNext">بعدی</button>
+        <button class="icon-btn" id="mClose" title="بستن"></button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div>
+        <div class="ba" id="mBA"><canvas class="ba-b"></canvas><canvas class="ba-a" id="mAfter"></canvas><div class="ba-h"></div></div>
+        <div class="ba-ctl"><span>قبل</span><input type="range" class="ba-range" id="mRange" min="0" max="100" value="100"><span>بعد</span></div>
+      </div>
+      <div>
+        <div id="mIssues"></div>
+        <label class="chk" style="margin-top:6px;"><input type="checkbox" id="mSafe"> نمایش ناحیه‌ی امن شبکه‌های اجتماعی (تقریبی)</label>
+        <div class="tweak" id="mTweak" style="display:none;">
+          <div class="step-title" style="margin-bottom:10px;">تنظیم دستی همین عکس</div>
+          <div class="canvas-hint" style="text-align:right; margin:0 0 10px;">لوگو را روی عکس بکشید یا اندازه‌اش را تغییر دهید.</div>
+          <div class="slider-row">
+            <div class="slider-label"><span>اندازه لوگو</span><span id="mSizeVal"></span></div>
+            <input type="range" id="mSize" min="2" max="60" step="0.5" value="12">
+          </div>
+          <label class="chk" style="margin-bottom:10px;"><input type="checkbox" id="mNoLogo"> بدون لوگو برای این عکس</label>
+          <button class="secondary sm" id="mReset">بازنشانی به چینش خودکار</button>
+        </div>
+        <div class="btn-row">
+          <button id="mAck"></button>
+          <button class="secondary" id="mReport"></button>
+        </div>
+        <div id="mMsg"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= GUIDE ================= -->
+<div id="guide" class="modal" style="display:none;">
+  <div class="modal-card" style="max-width:440px; text-align:center;">
+    <div id="guideBody"></div>
+    <div class="btn-row" style="justify-content:center;">
+      <button class="secondary" onclick="closeGuide()">رد کردن</button>
+      <button id="guideNext" onclick="guideNext()">بعدی</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ==================== CONFIG ====================
+const APP_VERSION = '2.0.0';
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxPH8rrSpLogx_ihe2FnApnmOZCoA4TdVwAquZSEttOiKdGEUZw1xVFSaWeHj4jseKI8g/exec";
+
+// رمزها سمت کلاینت هستند و فقط جلوی دست‌زدن اتفاقی را می‌گیرند. اینجا عوضشان کنید.
+const ADMIN_PASSWORD = "raya1405";
+const OPERATOR_PASSWORD = "oper1405";
+
+const SYSTEM_KEY = "_system"; // ردیف‌های تنظیمات سیستم (نام پروفایل‌ها، اطلاعیه) در شیت
+
+const PROFILE_BASE = {
+  dual:      { name: "دو-لوگو (رایامدیا)",     logoPath: "assets/logos/rayamediaa.png",   hasText: false, accent: "#0B6E4F" },
+  heyat:     { name: "هیئت (با متن)",          logoPath: "assets/logos/heyat.png",        hasText: true,  accent: "#B45309" },
+  janfada:   { name: "رایا و جان فدا",         logoPath: "assets/logos/rayajanfada.png",  hasText: false, accent: "#0369A1" },
+  moheban:   { name: "محبان (بدون پس زمینه)",  logoPath: "assets/logos/moheban.png",      hasText: false, accent: "#9F1239" },
+  mohebanBg: { name: "محبان (با پس زمینه)",    logoPath: "assets/logos/moheban(w).png",   hasText: false, accent: "#0F766E" }
+};
+const PROFILES = {};
+Object.keys(PROFILE_BASE).forEach(k => { PROFILES[k] = { ...PROFILE_BASE[k], hidden: false }; });
+
+const ROLE_LABEL = { guest: 'کاربر', operator: 'اپراتور', admin: 'ادمین' };
+
+const TEXT_STYLE = { gapXRatio: 0.1414, fontRatio: 0.3099, lineGapRatio: 0.1191, color: '#ffffff', fontFamily: 'Kalameh' };
+const DEMO_TEXT = { title: 'مراسم عزاداری دهه آخر ماه صفر', date: '۲۲ مرداد ۱۴۰۵' };
+
+const SHADOW_STYLE = {
+  enabled: true, opacity: 0.71, angleDeg: 90,
+  distanceRatio: 87 / 403,
+  blurRatio: (43 * (1 - 0.26)) / 403
+};
+
+const BUILT_IN_DEFAULT = { sizePct: 12, marginXPct: 3, marginYPct: 3, textScale: 100, vignette: 0 };
+const RATIO_TOLERANCE = 0.05;
+const COMMON_RATIOS = [[1,1],[4,5],[3,4],[2,3],[9,16],[5,4],[4,3],[3,2],[16,9],[21,9]];
+
+// ==================== HELPERS ====================
+const $ = id => document.getElementById(id);
+const FA_DIGITS = '۰۱۲۳۴۵۶۷۸۹';
+function toPersianDigits(s) {
+  return String(s)
+    .replace(/[0-9]/g, d => FA_DIGITS[d])
+    .replace(/[٠-٩]/g, d => FA_DIGITS[d.charCodeAt(0) - 0x0660]);
+}
+const toFa = toPersianDigits;
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+function fmtDate(ts, opts) {
+  try {
+    return new Intl.DateTimeFormat('fa-IR-u-ca-persian', opts || { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(ts));
+  } catch (err) { return new Date(ts).toLocaleDateString(); }
+}
+function fmtDateTime(ts) {
+  return fmtDate(ts, { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+function idTs(r, i) { return Number(String(r.id || '').replace(/\D/g, '')) || i; }
+function safeJSON(s) { try { return typeof s === 'object' ? s : JSON.parse(s); } catch (err) { return null; } }
+let toastTimer = null;
+function toast(msg) {
+  const t = $('toast');
+  t.textContent = msg; t.style.display = 'block';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.style.display = 'none'; }, 2600);
+}
+function setStatus(id, cls, msg) {
+  const el = $(id);
+  el.innerHTML = '';
+  const d = document.createElement('div');
+  d.className = 'status ' + cls;
+  d.textContent = msg;
+  el.appendChild(d);
+}
+
+const ICON_PATHS = {
+  upload: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>',
+  download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>',
+  check: '<polyline points="20 6 9 17 4 12"/>',
+  alert: '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
+  xcircle: '<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>',
+  x: '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+  flag: '<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/>',
+  moon: '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>',
+  sun: '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>',
+  logout: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>',
+  clock: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+  refresh: '<polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>',
+  printer: '<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>',
+  save: '<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>',
+  info: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>'
+};
+function icon(name, size) {
+  const s = size || 18;
+  return '<svg class="ic" width="' + s + '" height="' + s + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICON_PATHS[name] || '') + '</svg>';
+}
+
+// ==================== STATE ====================
+let role = 'guest';
+let currentTab = 'process';
+let currentStep = 1;
+let currentProfile = 'dual';
+let presetsCache = {};
+let logoImages = {};
+let kalamehFont = null;
+let sysCfg = { profiles: {}, announce: null };
+
+let uploadedFiles = [];   // { file, img, width, height, tweak, ack, cfg, qc }
+let batchText = { title: '', date: '' };
+let sampleConfirmed = false;
+let reviewFilter = 'all';
+let modalIdx = -1;
+let modalDrag = null;
+let qcTimer = null;
+let batchTextTimer = null;
+
+let adminSection = 'rules';
+let adminImages = [];
+let adminSel = -1;
+let adminDef = { ...BUILT_IN_DEFAULT };
+let adminDirty = false;
+let ed = null;
+let edDrag = null;
+let adminRenderQueued = false;
+
+let conn = 'online';
+const QUEUE_KEY = 'bl_queue2';
+let flushing = false;
+
+// ==================== THEME ====================
+function applyTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  try { localStorage.setItem('theme2', t); } catch (err) {}
+  const meta = $('metaTheme');
+  if (meta) meta.setAttribute('content', t === 'dark' ? '#0B1512' : '#EEF3F1');
+  const b = $('themeBtn');
+  if (b) b.innerHTML = icon(t === 'dark' ? 'sun' : 'moon', 18);
+}
+function initTheme() {
+  let t = null;
+  try { t = localStorage.getItem('theme2'); } catch (err) {}
+  if (!t) t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+  applyTheme(t);
+}
+function toggleTheme() {
+  applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+}
+
+// ==================== FONT / IMAGE LOADING ====================
+async function loadKalamehFont() {
+  if (kalamehFont) return kalamehFont;
+  try {
+    const font = new FontFace('Kalameh', 'url(assets/fonts/Kalameh.ttf)');
+    await font.load();
+    document.fonts.add(font);
+    kalamehFont = font;
+  } catch (err) {
+    console.error('فونت کلمه لود نشد، از فونت پیش‌فرض استفاده می‌شه:', err);
+  }
+  return kalamehFont;
+}
+
+function loadImageFromFile(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = async () => {
+      try { if (img.decode) await img.decode(); } catch (err) {}
+      resolve(img);
+    };
+    img.onerror = () => reject(new Error('خواندن فایل تصویر ناموفق بود: ' + file.name));
+    img.src = url;
+  });
+}
+
+function loadLogoImage(profileKey) {
+  return new Promise((resolve) => {
+    if (logoImages[profileKey]) return resolve(logoImages[profileKey]);
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = async () => {
+      try { if (img.decode) await img.decode(); } catch (err) {}
+      const entry = { img, ok: true };
+      logoImages[profileKey] = entry;
+      resolve(entry);
+    };
+    img.onerror = () => {
+      const entry = { img: null, ok: false };
+      logoImages[profileKey] = entry;
+      console.error('لوگوی پروفایل "' + profileKey + '" لود نشد. مسیر را بررسی کنید: ' + PROFILES[profileKey].logoPath);
+      resolve(entry);
+    };
+    img.src = PROFILES[profileKey].logoPath;
+  });
+}
+
+function logoAspect() {
+  const e = logoImages[currentProfile];
+  if (e && e.ok && e.img && e.img.naturalWidth > 0) return e.img.naturalHeight / e.img.naturalWidth;
+  return 1;
+}
+
+// ==================== CONNECTION + QUEUE ====================
+function loadQueue() {
+  try { return JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]'); } catch (err) { return []; }
+}
+function saveQueue(q) {
+  try { localStorage.setItem(QUEUE_KEY, JSON.stringify(q)); } catch (err) {}
+  updateConnUI();
+}
+function enqueue(payload) { const q = loadQueue(); q.push(payload); saveQueue(q); }
+function setConn(s) { conn = s; updateConnUI(); }
+function updateConnUI() {
+  const el = $('connPill');
+  if (!el) return;
+  const pend = loadQueue().length;
+  const map = { online: ['به‌روز', 'ok'], syncing: ['در حال همگام‌سازی', 'sync'], offline: ['آفلاین', 'off'] };
+  const m = map[conn] || map.online;
+  el.className = 'conn ' + m[1];
+  el.innerHTML = '<i class="dot"></i><span>' + m[0] + (pend ? ' · ' + toFa(pend) + ' در صف' : '') + '</span>';
+}
+async function flushQueue() {
+  if (flushing) return;
+  const q = loadQueue();
+  if (!q.length) return;
+  flushing = true;
+  setConn('syncing');
+  try {
+    while (q.length) {
+      await postToSheet(q[0]);
+      q.shift();
+      saveQueue(q);
+    }
+    setConn('online');
+  } catch (err) {
+    setConn('offline');
+  }
+  flushing = false;
+}
+// خروجی: 'ok' | 'queued' | 'fail'
+async function postQueued(payload) {
+  try {
+    const r = await postToSheet(payload);
+    setConn('online');
+    return (r && r.success) ? 'ok' : 'fail';
+  } catch (err) {
+    enqueue(payload);
+    setConn('offline');
+    return 'queued';
+  }
+}
+
+// ==================== API ====================
+async function postToSheet(payload) {
+  const res = await fetch(APPS_SCRIPT_URL, {
+    method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload)
+  });
+  const text = await res.text();
+  try { return JSON.parse(text); }
+  catch (err) { throw new Error('پاسخ نامعتبر از شیت: ' + text.slice(0, 140)); }
+}
+
+async function fetchLogs(sinceMs) {
+  const res = await fetch(`${APPS_SCRIPT_URL}?action=logs&since=${sinceMs || 0}`);
+  const json = await res.json();
+  if (!json.success || !json.logs || !Array.isArray(json.data)) {
+    throw new Error('نسخه‌ی اپ اسکریپت قدیمی است. کد جدید code.gs را جایگزین و دوباره Deploy کنید.');
+  }
+  return json.data.map(r => ({
+    ts: Date.parse(r.timestamp) || 0,
+    profile: r.profile || '',
+    count: Number(r.imageCount) || 0,
+    ratios: safeJSON(r.ratios) || {},
+    warnings: Number(r.warnings) || 0,
+    errors: Number(r.errors) || 0,
+    role: r.role || ''
+  }));
+}
+
+// ==================== PRESETS (cache + sheet) ====================
+function parseConfig(c) { return safeJSON(c); }
+function loadCachedPresets(profileKey) {
+  try {
+    const cached = localStorage.getItem('presets2_' + profileKey);
+    if (cached) { presetsCache[profileKey] = JSON.parse(cached); return true; }
+  } catch (err) { console.error("خطا در خواندن کش:", err); }
+  return false;
+}
+function saveCachedPresets(profileKey) {
+  try { localStorage.setItem('presets2_' + profileKey, JSON.stringify(presetsCache[profileKey])); }
+  catch (err) { console.error("خطا در ذخیره کش:", err); }
+}
+async function fetchPresets(profileKey) {
+  try {
+    const res = await fetch(`${APPS_SCRIPT_URL}?profile=${encodeURIComponent(profileKey)}`);
+    const json = await res.json();
+    if (json.success) {
+      presetsCache[profileKey] = json.data
+        .map(r => ({ ...r, config: parseConfig(r.config) }))
+        .filter(r => r.config);
+      saveCachedPresets(profileKey);
+      setConn('online');
+      flushQueue();
+      if (profileKey === currentProfile) afterPresetsLoaded();
+      return true;
+    }
+  } catch (err) {
+    console.error("خطا در خواندن پریست‌ها از شیت:", err);
+    setConn('offline');
+    if (!presetsCache[profileKey]) presetsCache[profileKey] = [];
+  }
+  return false;
+}
+async function loadProfileData(profileKey) {
+  await loadLogoImage(profileKey);
+  loadCachedPresets(profileKey);
+  if (profileKey === currentProfile) afterPresetsLoaded();
+  fetchPresets(profileKey);
+}
+function afterPresetsLoaded() {
+  if (!adminDirty) { adminDef = { ...getRules(currentProfile).def }; syncDefSliders(); }
+  recomputeAll();
+  updateFooter();
+  if (currentTab === 'admin') {
+    renderAdminNav();
+    if (adminSection === 'rules') renderAdmin();
+  }
+}
+async function loadAllProfiles() {
+  await Promise.all(Object.keys(PROFILES).map(k => fetchPresets(k)));
+}
+
+// ==================== SYSTEM CONFIG (profiles, announcement) ====================
+function parseSys(rows) {
+  const latest = {};
+  rows.forEach((r, i) => {
+    const c = r.config;
+    if (!c || c.v !== 2) return;
+    let key;
+    if (c.kind === 'profilecfg') key = 'p:' + c.key;
+    else if (c.kind === 'announce') key = 'announce';
+    else return;
+    const ts = idTs(r, i);
+    if (!latest[key] || ts >= latest[key].ts) latest[key] = { ts, c };
+  });
+  const out = { profiles: {}, announce: null };
+  Object.entries(latest).forEach(([k, { c }]) => {
+    if (k === 'announce') out.announce = c;
+    else out.profiles[c.key] = c;
+  });
+  return out;
+}
+function applySys() {
+  Object.keys(PROFILE_BASE).forEach(k => {
+    const s = sysCfg.profiles[k] || {};
+    PROFILES[k] = {
+      ...PROFILE_BASE[k],
+      name: s.name || PROFILE_BASE[k].name,
+      accent: s.accent || PROFILE_BASE[k].accent,
+      hidden: !!s.hidden
+    };
+  });
+  renderAnnounce();
+  if ($('profileCards')) renderProfileCards();
+  fillAdmProfile();
+}
+async function loadSystemConfig() {
+  try {
+    const cached = localStorage.getItem('sys2');
+    if (cached) { sysCfg = JSON.parse(cached); applySys(); }
+  } catch (err) {}
+  try {
+    const res = await fetch(`${APPS_SCRIPT_URL}?profile=${SYSTEM_KEY}`);
+    const json = await res.json();
+    if (json.success) {
+      sysCfg = parseSys(json.data.map(r => ({ ...r, config: parseConfig(r.config) })).filter(r => r.config));
+      try { localStorage.setItem('sys2', JSON.stringify(sysCfg)); } catch (err) {}
+      applySys();
+    }
+  } catch (err) { console.error('تنظیمات سیستم خوانده نشد:', err); }
+}
+function postSys(config) {
+  return postToSheet({
+    action: 'save', id: 'p_' + Date.now(), profile: SYSTEM_KEY, presetName: 'sys',
+    width: 1, height: 1, config
+  });
+}
+function renderAnnounce() {
+  const bar = $('annBar');
+  const a = sysCfg.announce;
+  if (a && a.active && a.text) {
+    bar.className = 'annbar ' + (a.level || 'info');
+    bar.textContent = a.text;
+    bar.style.display = 'block';
+  } else {
+    bar.style.display = 'none';
+  }
+}
+
+// ==================== RULES (ratio-based) ====================
+// ردیف‌های شیت (آخرین ردیف هر کلید برنده است):
+//  default: { v:2, kind:'default', sizePct, marginXPct, marginYPct, textScale, vignette }
+//  ratio:   { v:2, kind:'ratio', ratio, xFrac, yFrac, sizePct, textOffXPct, textOffYPct, removed? }
+//  report:  { v:2, kind:'report', ratio, w, h }
+function getRules(profileKey) {
+  const list = presetsCache[profileKey] || [];
+  const latest = {};
+  list.forEach((r, i) => {
+    const c = r.config;
+    if (!c || c.v !== 2) return;
+    let key;
+    if (c.kind === 'default') key = 'default';
+    else if (c.kind === 'ratio') key = 'r' + Math.round(c.ratio * 1000);
+    else if (c.kind === 'report') key = 'x' + Math.round(c.ratio * 1000);
+    else return;
+    const ts = idTs(r, i);
+    if (!latest[key] || ts >= latest[key].ts) latest[key] = { ts, c };
+  });
+  let def = { ...BUILT_IN_DEFAULT };
+  const overrides = [];
+  const reportsRaw = [];
+  let rulesTs = 0;
+  Object.entries(latest).forEach(([k, { ts, c }]) => {
+    if (k === 'default') { def = { ...def, ...c }; if (ts > 1e12) rulesTs = Math.max(rulesTs, ts); }
+    else if (k[0] === 'r') { if (ts > 1e12) rulesTs = Math.max(rulesTs, ts); if (!c.removed) overrides.push({ ...c, ts }); }
+    else reportsRaw.push({ ...c, ts });
+  });
+  const reports = reportsRaw.filter(rep => {
+    const o = nearestOverride(rep.ratio, overrides);
+    return !(o && o.ts >= rep.ts);
+  });
+  return { def, overrides, reports, rulesTs };
+}
+
+function nearestOverride(ratio, overrides) {
+  let best = null, bestDist = Infinity;
+  overrides.forEach(o => {
+    const dist = Math.abs(Math.log(ratio / o.ratio));
+    if (dist < bestDist) { bestDist = dist; best = o; }
+  });
+  return (best && bestDist <= RATIO_TOLERANCE) ? best : null;
+}
+
+function resolveConfig(w, h, rules) {
+  const short = Math.min(w, h);
+  const d = rules.def;
+  const base = { textScale: d.textScale, vignette: d.vignette };
+  const o = nearestOverride(w / h, rules.overrides);
+  if (o) {
+    return {
+      ...base,
+      logoX: Math.round(o.xFrac * w),
+      logoY: Math.round(o.yFrac * h),
+      logoWidth: Math.max(1, Math.round(short * o.sizePct / 100)),
+      textOffsetX: Math.round(short * (o.textOffXPct || 0) / 100),
+      textOffsetY: Math.round(short * (o.textOffYPct || 0) / 100),
+      source: 'override'
+    };
+  }
+  const lw = Math.max(1, Math.round(short * d.sizePct / 100));
+  const lh = Math.round(lw * logoAspect());
+  return {
+    ...base,
+    logoX: w - Math.round(short * d.marginXPct / 100) - lw,
+    logoY: h - Math.round(short * d.marginYPct / 100) - lh,
+    logoWidth: lw,
+    textOffsetX: 0,
+    textOffsetY: 0,
+    source: 'default'
+  };
+}
+
+function itemConfig(item, rules) {
+  const base = resolveConfig(item.width, item.height, rules);
+  const t = item.tweak;
+  if (!t) return base;
+  if (t.noLogo) return { ...base, hideLogo: true, source: 'tweak' };
+  const short = Math.min(item.width, item.height);
+  return {
+    ...base,
+    logoX: Math.round(t.xFrac * item.width),
+    logoY: Math.round(t.yFrac * item.height),
+    logoWidth: Math.max(1, Math.round(short * t.sizePct / 100)),
+    textOffsetX: Math.round(short * (t.textOffXPct || 0) / 100),
+    textOffsetY: Math.round(short * (t.textOffYPct || 0) / 100),
+    source: 'tweak'
+  };
+}
+
+function ratioLabel(r) {
+  let best = null, bd = 1e9;
+  COMMON_RATIOS.forEach(([a, b]) => {
+    const d = Math.abs(Math.log(r / (a / b)));
+    if (d < bd) { bd = d; best = a + ':' + b; }
+  });
+  return bd <= 0.02 ? toFa(best) : toFa(Number(r).toFixed(2));
+}
+function isCommonRatio(r) {
+  return COMMON_RATIOS.some(([a, b]) => Math.abs(Math.log(r / (a / b))) <= RATIO_TOLERANCE);
+}
+
+// ==================== SAFE ZONES + QUALITY CHECK ====================
+// مقادیر تقریبی‌اند: بخش‌هایی که رابط استوری/ریلز یا برش گرید پروفایل روی عکس می‌گذارد.
+function safeZones(ratio) {
+  const near = r => Math.abs(Math.log(ratio / r)) <= RATIO_TOLERANCE;
+  if (near(9 / 16)) return [{ x: 0, y: 0, w: 1, h: 0.14 }, { x: 0, y: 0.80, w: 1, h: 0.20 }];
+  if (near(4 / 5)) return [{ x: 0, y: 0, w: 0.032, h: 1 }, { x: 0.968, y: 0, w: 0.032, h: 1 }];
+  return [];
+}
+function drawSafeOverlay(ctx, W, H, ratio) {
+  const zones = safeZones(ratio);
+  if (!zones.length) return;
+  ctx.save();
+  ctx.fillStyle = 'rgba(220,38,38,.22)';
+  ctx.strokeStyle = 'rgba(220,38,38,.9)';
+  ctx.lineWidth = Math.max(1, W / 400);
+  ctx.setLineDash([W / 60, W / 90]);
+  zones.forEach(z => {
+    ctx.fillRect(z.x * W, z.y * H, z.w * W, z.h * H);
+    ctx.strokeRect(z.x * W, z.y * H, z.w * W, z.h * H);
+  });
+  ctx.restore();
+}
+function rectsOverlap(a, b) {
+  return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+}
+
+function runQC(item, cfg) {
+  const issues = [];
+  const w = item.width, h = item.height, short = Math.min(w, h);
+  if (cfg.hideLogo) {
+    return { issues: [{ lvl: 'warn', msg: 'برای این عکس لوگو حذف شده است (تنظیم دستی).' }], lvl: 'warn' };
+  }
+  const lh = cfg.logoWidth * logoAspect();
+  const gapL = cfg.logoX, gapT = cfg.logoY;
+  const gapR = w - (cfg.logoX + cfg.logoWidth), gapB = h - (cfg.logoY + lh);
+  if (Math.min(gapL, gapT, gapR, gapB) < 0) {
+    issues.push({ lvl: 'error', msg: 'بخشی از لوگو بیرون از قاب عکس افتاده است.' });
+  } else if (Math.min(gapL, gapT, gapR, gapB) < short * 0.01) {
+    issues.push({ lvl: 'warn', msg: 'لوگو بسیار نزدیک لبه‌ی عکس قرار گرفته است.' });
+  }
+  if (short < 720) issues.push({ lvl: 'warn', msg: 'رزولوشن عکس پایین است (ضلع کوتاه‌تر کمتر از ۷۲۰ پیکسل)؛ خروجی ممکن است کم‌کیفیت دیده شود.' });
+  if (cfg.logoWidth < 80) issues.push({ lvl: 'warn', msg: 'لوگو روی این عکس خیلی کوچک می‌شود (کمتر از ۸۰ پیکسل عرض).' });
+  if (cfg.source === 'default' && !isCommonRatio(w / h)) {
+    issues.push({ lvl: 'warn', msg: 'نسبت این عکس غیرمعمول است و ادمین برایش اصلاحی ثبت نکرده؛ چینش پیش‌فرض اعمال شده است.' });
+  }
+  const logoRect = { x: cfg.logoX / w, y: cfg.logoY / h, w: cfg.logoWidth / w, h: lh / h };
+  if (safeZones(w / h).some(z => rectsOverlap(logoRect, z))) {
+    issues.push({ lvl: 'warn', msg: 'لوگو روی ناحیه‌ای می‌افتد که دکمه‌ها و نوشته‌های اینستاگرام روی آن می‌نشینند (تقریبی).' });
+  }
+  if (PROFILES[currentProfile].hasText && (batchText.title || batchText.date)) {
+    const cw = Math.min(w, 500);
+    const c = document.createElement('canvas');
+    c.width = cw; c.height = Math.round(cw * h / w);
+    const sf = cw / w;
+    const m = drawComposite(c, item.img, cfg, sf, batchText);
+    if (m) {
+      const fontReal = m.fontPx / sf;
+      if (m.shrinkFactor < 0.6) issues.push({ lvl: 'error', msg: 'متن برای جای موجود خیلی طولانی است و به‌شدت کوچک شده؛ متن را کوتاه‌تر کنید یا لوگو را کوچک‌تر بگیرید.' });
+      else if (m.shrunk) issues.push({ lvl: 'warn', msg: 'متن برای جا شدن کنار لوگو کمی کوچک‌تر شده است.' });
+      if (fontReal < short * 0.016) issues.push({ lvl: 'warn', msg: 'اندازه‌ی متن نسبت به عکس ریز است و ممکن است خوانا نباشد.' });
+    }
+  }
+  const lvl = issues.some(i => i.lvl === 'error') ? 'error' : (issues.length ? 'warn' : 'ok');
+  return { issues, lvl };
+}
+function issuesHTML(qc) {
+  if (!qc.issues.length) {
+    return '<div class="issue ok">' + icon('check', 18) + '<span>مشکلی برای این عکس پیدا نشد.</span></div>';
+  }
+  return qc.issues.map(i =>
+    '<div class="issue ' + i.lvl + '">' + icon(i.lvl === 'error' ? 'xcircle' : 'alert', 18) + '<span>' + esc(i.msg) + '</span></div>'
+  ).join('');
+}
+
+// ==================== DRAWING (shared, defensive) ====================
+function applyVignette(ctx, W, H, intensity) {
+  if (!intensity) return;
+  const strength = Math.min(100, Math.max(0, intensity)) / 100;
+  const outerR = Math.sqrt(W * W + H * H) / 2;
+  const innerR = outerR * (1 - 0.75 * strength);
+  const grad = ctx.createRadialGradient(W / 2, H / 2, innerR * 0.4, W / 2, H / 2, outerR);
+  grad.addColorStop(0, 'rgba(0,0,0,0)');
+  grad.addColorStop(1, `rgba(0,0,0,${0.95 * strength})`);
+  ctx.save();
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+  ctx.restore();
+}
+
+// خروجی: false اگر عکس رسم نشد؛ وگرنه شیء متریک متن
+function drawComposite(canvas, photoImg, config, scaleFactor, textLines) {
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  if (!photoImg || !photoImg.complete || photoImg.naturalWidth === 0) return false;
+  ctx.drawImage(photoImg, 0, 0, canvas.width, canvas.height);
+
+  const W = canvas.width, H = canvas.height;
+  const metrics = { fontPx: 0, shrunk: false, shrinkFactor: 1 };
+
+  applyVignette(ctx, W, H, config.vignette || 0);
+  if (config.hideLogo) return metrics;
+
+  const logoEntry = logoImages[currentProfile];
+  const lx = config.logoX * scaleFactor;
+  const ly = config.logoY * scaleFactor;
+  const lw = Math.max(1, config.logoWidth * scaleFactor);
+  let lh = lw;
+
+  if (logoEntry && logoEntry.ok && logoEntry.img && logoEntry.img.naturalWidth > 0) {
+    const logoImg = logoEntry.img;
+    const ratio = logoImg.naturalHeight / logoImg.naturalWidth;
+    lh = lw * (isFinite(ratio) ? ratio : 1);
+  }
+
+  const angleRad = SHADOW_STYLE.angleDeg * Math.PI / 180;
+  const shadowDistance = SHADOW_STYLE.distanceRatio * lh;
+  const shadowOffX = -shadowDistance * Math.cos(angleRad);
+  const shadowOffY = shadowDistance * Math.sin(angleRad);
+  const shadowBlur = SHADOW_STYLE.blurRatio * lh;
+  const shadowColor = `rgba(0,0,0,${SHADOW_STYLE.opacity})`;
+
+  if (logoEntry && logoEntry.ok && logoEntry.img && logoEntry.img.naturalWidth > 0) {
+    try {
+      if (SHADOW_STYLE.enabled) {
+        ctx.save();
+        ctx.shadowColor = shadowColor;
+        ctx.shadowBlur = shadowBlur;
+        ctx.shadowOffsetX = shadowOffX;
+        ctx.shadowOffsetY = shadowOffY;
+      }
+      ctx.drawImage(logoEntry.img, lx, ly, lw, lh);
+      if (SHADOW_STYLE.enabled) ctx.restore();
+    } catch (err) { console.error('خطا در رسم لوگو:', err); }
+  }
+
+  if (PROFILES[currentProfile] && PROFILES[currentProfile].hasText && textLines && (textLines.title || textLines.date)) {
+    const textScale = (config.textScale || 100) / 100;
+    const gapX = TEXT_STYLE.gapXRatio * lh;
+    let fontSize = TEXT_STYLE.fontRatio * lh * textScale;
+    const startFont = fontSize;
+    const lineGap = TEXT_STYLE.lineGapRatio * lh;
+
+    const offX = (config.textOffsetX || 0) * scaleFactor;
+    const offY = (config.textOffsetY || 0) * scaleFactor;
+
+    const margin = 0.01 * W;
+    const textRightX = Math.min(lx - gapX + offX, W - margin);
+    const maxTextWidth = Math.max(20, textRightX - margin);
+
+    ctx.textAlign = 'right';
+    ctx.direction = 'rtl';
+    ctx.fillStyle = TEXT_STYLE.color;
+
+    ctx.font = `${fontSize}px Kalameh, Vazirmatn, sans-serif`;
+    const widths = [];
+    const rtlSafe = s => toPersianDigits(s);
+    if (textLines.title) widths.push(ctx.measureText(rtlSafe(textLines.title)).width);
+    if (textLines.date) widths.push(ctx.measureText(rtlSafe(textLines.date)).width);
+    const widestLine = widths.length ? Math.max(...widths) : 0;
+
+    if (widestLine > maxTextWidth) {
+      const shrinkFactor = maxTextWidth / widestLine;
+      fontSize = Math.max(6, fontSize * shrinkFactor);
+      ctx.font = `${fontSize}px Kalameh, Vazirmatn, sans-serif`;
+    }
+    metrics.fontPx = fontSize;
+    metrics.shrinkFactor = startFont > 0 ? fontSize / startFont : 1;
+    metrics.shrunk = metrics.shrinkFactor < 0.999;
+
+    const logoCenterY = ly + lh / 2 + offY;
+    const blockHeight = fontSize * 2 + lineGap;
+    let cursorY = logoCenterY - blockHeight / 2 + fontSize;
+
+    if (SHADOW_STYLE.enabled) {
+      ctx.shadowColor = shadowColor;
+      ctx.shadowBlur = shadowBlur;
+      ctx.shadowOffsetX = shadowOffX;
+      ctx.shadowOffsetY = shadowOffY;
+    }
+
+    if (textLines.title) ctx.fillText(rtlSafe(textLines.title), textRightX, cursorY);
+    if (textLines.date) {
+      cursorY += lineGap + fontSize;
+      ctx.fillText(rtlSafe(textLines.date), textRightX, cursorY);
+    }
+
+    if (SHADOW_STYLE.enabled) {
+      ctx.shadowColor = 'transparent';
+      ctx.shadowBlur = 0;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 0;
+    }
+  }
+
+  return metrics;
+}
+
+// ==================== ENTRY / ROLES ====================
+function toggleAccess() {
+  const b = $('accessBox');
+  b.style.display = b.style.display === 'none' ? 'block' : 'none';
+}
+function setRole(r) {
+  role = r;
+  try { sessionStorage.setItem('role2', r); sessionStorage.setItem('entered2', '1'); } catch (err) {}
+}
+function enterGuest() { setRole('guest'); showApp(); }
+function submitAccess() {
+  const sel = $('accessRole').value;
+  const pw = $('accessPass').value;
+  if ((sel === 'admin' && pw === ADMIN_PASSWORD) || (sel === 'operator' && pw === OPERATOR_PASSWORD)) {
+    $('accessPass').value = '';
+    setRole(sel);
+    showApp();
+  } else {
+    setStatus('accessMsg', 'err', 'رمز اشتباه است.');
+  }
+}
+function logout() {
+  try { sessionStorage.removeItem('role2'); sessionStorage.removeItem('entered2'); } catch (err) {}
+  location.reload();
+}
+
+function showApp() {
+  $('entry').style.display = 'none';
+  $('appbar').style.display = '';
+  $('shell').style.display = '';
+  $('appFooter').style.display = '';
+  $('tabBtnAdmin').style.display = role === 'admin' ? '' : 'none';
+  $('roleBadge').textContent = ROLE_LABEL[role] || '';
+  if (PROFILES[currentProfile].hidden && role !== 'admin') {
+    const first = Object.keys(PROFILES).find(k => !PROFILES[k].hidden);
+    if (first) currentProfile = first;
+  }
+  document.documentElement.style.setProperty('--pa', PROFILES[currentProfile].accent);
+  $('batchTextCard').style.display = PROFILES[currentProfile].hasText ? 'block' : 'none';
+  renderProfileCards();
+  fillAdmProfile();
+  updateConnUI();
+  updateFooter();
+  switchTab('process');
+  showStep();
+  let seen = false;
+  try { seen = localStorage.getItem('guide2') === '1'; } catch (err) {}
+  if (!seen) openGuide();
+}
+
+function switchTab(tab) {
+  if (tab === 'admin' && role !== 'admin') return;
+  currentTab = tab;
+  $('tabProcess').style.display = tab === 'process' ? 'block' : 'none';
+  $('tabAdmin').style.display = tab === 'admin' ? 'block' : 'none';
+  $('tabBtnProcess').classList.toggle('active', tab === 'process');
+  $('tabBtnAdmin').classList.toggle('active', tab === 'admin');
+  if (tab === 'admin') showAdminSection(adminSection);
+}
+
+function updateFooter() {
+  const rt = getRules(currentProfile).rulesTs;
+  $('footInfo').textContent = 'نسخه ' + toFa(APP_VERSION) + ' · آخرین به‌روزرسانی قوانین این پروفایل: ' + (rt ? fmtDate(rt) : '—');
+}
+
+// ==================== PROFILE CARDS ====================
+function renderProfileCards() {
+  const wrap = $('profileCards');
+  wrap.innerHTML = '';
+  Object.keys(PROFILES).forEach(k => {
+    const p = PROFILES[k];
+    if (p.hidden && role !== 'admin') return;
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'pcard' + (k === currentProfile ? ' on' : '');
+    b.style.setProperty('--pa', p.accent);
+    b.innerHTML =
+      '<span class="pthumb"><img src="' + esc(p.logoPath) + '" alt="" onerror="this.style.display=\'none\'"></span>' +
+      '<span class="pname">' + esc(p.name) + '</span>' +
+      (p.hasText ? '<span class="ptag">با متن</span>' : '') +
+      (p.hidden ? '<span class="ptag">مخفی</span>' : '');
+    b.onclick = () => selectProfile(k);
+    wrap.appendChild(b);
+  });
+}
+
+async function selectProfile(k) {
+  if (!PROFILES[k]) return;
+  currentProfile = k;
+  try { localStorage.setItem('lastProfile2', k); } catch (err) {}
+  document.documentElement.style.setProperty('--pa', PROFILES[k].accent);
+  $('batchTextCard').style.display = PROFILES[k].hasText ? 'block' : 'none';
+  renderProfileCards();
+  if ($('admProfile')) $('admProfile').value = k;
+  adminDef = { ...getRules(k).def };
+  adminDirty = false; adminSel = -1; ed = null;
+  $('adminEditor').style.display = 'none';
+  syncDefSliders();
+  sampleConfirmed = false;
+  if (currentStep === 3) currentStep = 2;
+  await loadProfileData(k);
+  recomputeAll();
+  if (currentTab === 'process') showStep();
+  else showAdminSection(adminSection);
+}
+
+// ==================== WIZARD ====================
+function renderStepper() {
+  const labels = ['آپلود', 'بررسی', 'دانلود'];
+  const el = $('stepper');
+  el.innerHTML = '';
+  labels.forEach((l, i) => {
+    const n = i + 1;
+    const st = document.createElement('div');
+    st.className = 'st' + (n < currentStep ? ' done clickable' : '') + (n === currentStep ? ' on' : '');
+    st.innerHTML = '<span class="st-dot">' + (n < currentStep ? icon('check', 15) : toFa(n)) + '</span><span class="st-label">' + l + '</span>';
+    if (n < currentStep) st.onclick = () => goStep(n);
+    el.appendChild(st);
+    if (n < 3) { const ln = document.createElement('div'); ln.className = 'st-line'; el.appendChild(ln); }
+  });
+}
+function goStep(n) {
+  if (n >= 2 && !uploadedFiles.length) { toast('ابتدا عکس‌ها را انتخاب کنید.'); return; }
+  if (n === 3 && !sampleConfirmed) { toast('ابتدا نمونه‌ی اول را تایید کنید.'); return; }
+  currentStep = n;
+  showStep();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function showStep() {
+  [1, 2, 3].forEach(i => { $('step' + i).style.display = i === currentStep ? 'block' : 'none'; });
+  renderStepper();
+  if (currentStep === 2) renderStep2();
+  if (currentStep === 3) renderStep3();
+}
+
+function recomputeAll() {
+  const rules = getRules(currentProfile);
+  uploadedFiles.forEach(it => { it.cfg = itemConfig(it, rules); it.qc = runQC(it, it.cfg); });
+  if (currentTab === 'process' && modalIdx < 0) {
+    if (currentStep === 2) renderStep2();
+    if (currentStep === 3) renderStep3();
+  }
+}
+
+function onBatchTextChange() {
+  batchText.title = $('batchTitleInput').value;
+  batchText.date = $('batchDateInput').value;
+  clearTimeout(batchTextTimer);
+  batchTextTimer = setTimeout(() => { if (uploadedFiles.length) recomputeAll(); }, 250);
+}
+
+// ----- step 1: upload -----
+function initDropzone() {
+  $('dzIcon').innerHTML = icon('upload', 34);
+  const dz = $('dropzone');
+  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag'); });
+  dz.addEventListener('dragleave', () => dz.classList.remove('drag'));
+  dz.addEventListener('drop', e => {
+    e.preventDefault(); dz.classList.remove('drag');
+    if (e.dataTransfer && e.dataTransfer.files.length) handleFileList(e.dataTransfer.files);
+  });
+  $('fileInput').addEventListener('change', e => handleFileList(e.target.files));
+  document.addEventListener('paste', e => {
+    if (currentTab !== 'process' || currentStep !== 1) return;
+    const files = e.clipboardData && e.clipboardData.files;
+    if (files && files.length) handleFileList(files);
+  });
+}
+
+async function handleFileList(fileList) {
+  const files = Array.from(fileList).filter(f => /^image\//.test(f.type) || /\.(jpe?g|png|webp|gif|bmp)$/i.test(f.name));
+  if (!files.length) { toast('فایل تصویری پیدا نشد.'); return; }
+  uploadedFiles = []; sampleConfirmed = false; reviewFilter = 'all';
+  const wrap = $('loadWrap'), bar = $('loadBar');
+  wrap.style.display = 'block'; bar.style.width = '0%';
+  for (let i = 0; i < files.length; i++) {
+    try {
+      const img = await loadImageFromFile(files[i]);
+      uploadedFiles.push({ file: files[i], img, width: img.naturalWidth, height: img.naturalHeight, tweak: null, ack: false, cfg: null, qc: null });
+    } catch (err) { console.error(err); }
+    bar.style.width = Math.round((i + 1) / files.length * 100) + '%';
+    $('loadLabel').textContent = toFa(i + 1) + ' از ' + toFa(files.length);
+  }
+  $('fileInput').value = '';
+  if (!uploadedFiles.length) { wrap.style.display = 'none'; toast('خواندن عکس‌ها ناموفق بود.'); return; }
+  recomputeAll();
+  setTimeout(() => { wrap.style.display = 'none'; goStep(2); }, 250);
+}
+
+// ----- before / after helper -----
+function baSet(root, v) {
+  const a = root.querySelector('.ba-a'), h = root.querySelector('.ba-h');
+  a.style.clipPath = 'inset(0 ' + (100 - v) + '% 0 0)';
+  h.style.left = v + '%';
+}
+function baBind(root, range) {
+  range.addEventListener('input', () => baSet(root, Number(range.value)));
+  baSet(root, Number(range.value));
+}
+function baDraw(root, item, cfg, opts) {
+  const b = root.querySelector('.ba-b'), a = root.querySelector('.ba-a');
+  const cw = Math.min(item.width, 900), ch = Math.round(cw * item.height / item.width);
+  b.width = a.width = cw; b.height = a.height = ch;
+  b.getContext('2d').drawImage(item.img, 0, 0, cw, ch);
+  drawComposite(a, item.img, cfg, cw / item.width, batchText);
+  if (opts && opts.safe) drawSafeOverlay(a.getContext('2d'), cw, ch, item.width / item.height);
+}
+
+// ----- step 2 -----
+function renderStep2() {
+  $('samplePanel').style.display = sampleConfirmed ? 'none' : 'block';
+  $('reviewPanel').style.display = sampleConfirmed ? 'block' : 'none';
+  if (!uploadedFiles.length) return;
+  if (!sampleConfirmed) renderSample(); else renderReview();
+}
+
+function renderSample() {
+  const it = uploadedFiles[0];
+  if (!it) return;
+  const root = $('sampleBA');
+  const range = root.parentElement.querySelector('.ba-range');
+  baDraw(root, it, it.cfg, {});
+  if (!root._bound) { baBind(root, range); root._bound = true; } else baSet(root, Number(range.value));
+  const srcLabel = it.cfg.source === 'override' ? 'اصلاح‌شده توسط ادمین' : 'قانون پیش‌فرض';
+  $('sampleInfo').innerHTML =
+    '<span>فایل</span><span dir="ltr">' + esc(it.file.name) + '</span>' +
+    '<span>ابعاد</span><span>' + toFa(it.width) + '×' + toFa(it.height) + '</span>' +
+    '<span>تعداد عکس‌ها</span><span>' + toFa(uploadedFiles.length) + '</span>' +
+    '<span>چینش</span><span>' + srcLabel + '</span>';
+  $('sampleIssues').innerHTML = issuesHTML(it.qc);
+  $('sampleOk').innerHTML = icon('check', 16) + ' تایید نمونه و ادامه';
+}
+function confirmSample() { sampleConfirmed = true; renderStep2(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+function setFilter(f) {
+  reviewFilter = f;
+  $('fltAll').classList.toggle('on', f === 'all');
+  $('fltIssues').classList.toggle('on', f === 'issues');
+  renderReview();
+}
+
+function renderReview() {
+  const items = uploadedFiles;
+  const cnt = { ok: 0, warn: 0, error: 0 };
+  items.forEach(i => { cnt[i.qc.lvl]++; });
+  const acked = items.filter(i => i.ack).length;
+  $('revSummary').innerHTML =
+    '<span class="chip">' + icon('upload', 14) + ' ' + toFa(items.length) + ' عکس</span>' +
+    '<span class="chip ok">' + icon('check', 14) + ' ' + toFa(cnt.ok) + ' سالم</span>' +
+    '<span class="chip warn">' + icon('alert', 14) + ' ' + toFa(cnt.warn) + ' هشدار</span>' +
+    '<span class="chip err">' + icon('xcircle', 14) + ' ' + toFa(cnt.error) + ' نیازمند بررسی</span>' +
+    (acked ? '<span class="chip">' + icon('check', 14) + ' ' + toFa(acked) + ' تاییدشده</span>' : '');
+  $('toStep3').innerHTML = 'ادامه به دانلود';
+  const sev = { error: 0, warn: 1, ok: 2 };
+  let order = items.map((it, i) => i).sort((a, b) => (sev[items[a].qc.lvl] - sev[items[b].qc.lvl]) || (a - b));
+  if (reviewFilter === 'issues') order = order.filter(i => items[i].qc.lvl !== 'ok');
+  const grid = $('revTiles');
+  grid.innerHTML = '';
+  if (!order.length) {
+    grid.innerHTML = '<div class="status ok" style="grid-column:1/-1;">همه‌ی عکس‌ها بدون مشکل هستند.</div>';
+    return;
+  }
+  order.forEach(i => {
+    const it = items[i];
+    const tile = document.createElement('div');
+    tile.className = 'tile ' + it.qc.lvl;
+    const c = document.createElement('canvas');
+    c.width = 220; c.height = Math.round(220 * it.height / it.width);
+    drawComposite(c, it.img, it.cfg, c.width / it.width, batchText);
+    const qIcon = it.qc.lvl === 'ok' ? 'check' : (it.qc.lvl === 'warn' ? 'alert' : 'xcircle');
+    tile.innerHTML = '<span class="q-badge ' + it.qc.lvl + '">' + icon(qIcon, 15) + '</span>';
+    tile.appendChild(c);
+    const nm = document.createElement('div');
+    nm.className = 'tile-name'; nm.textContent = it.file.name;
+    const meta = document.createElement('div');
+    meta.className = 'tile-meta';
+    meta.innerHTML = '<span>' + toFa(it.width) + '×' + toFa(it.height) + '</span>' +
+      (it.ack ? '<span class="ack-mark">' + icon('check', 13) + ' تایید</span>' : (it.tweak ? '<span class="badge ovr">دستی</span>' : ''));
+    tile.appendChild(nm); tile.appendChild(meta);
+    tile.onclick = () => openModal(i);
+    grid.appendChild(tile);
+  });
+}
+
+// ==================== IMAGE DETAIL MODAL ====================
+function initModal() {
+  $('mClose').innerHTML = icon('x', 18);
+  $('mClose').onclick = closeModal;
+  $('modal').addEventListener('click', e => { if (e.target === $('modal')) closeModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') { if (modalIdx >= 0) closeModal(); else if ($('guide').style.display !== 'none') closeGuide(); } });
+  $('mPrev').onclick = () => modalGo(-1);
+  $('mNext').onclick = () => modalGo(1);
+  baBind($('mBA'), $('mRange'));
+  $('mSafe').addEventListener('change', modalDraw);
+  $('mAck').onclick = () => { const it = uploadedFiles[modalIdx]; if (!it) return; it.ack = !it.ack; renderModal(); };
+  $('mReport').onclick = () => { const it = uploadedFiles[modalIdx]; if (it) reportBad(it.width, it.height, $('mReport')); };
+
+  $('mSize').addEventListener('input', () => {
+    const it = uploadedFiles[modalIdx]; if (!it) return;
+    ensureTweak(it);
+    const short = Math.min(it.width, it.height), asp = logoAspect(), t = it.tweak;
+    const oldLw = short * t.sizePct / 100;
+    const right = t.xFrac * it.width + oldLw;
+    const bottom = t.yFrac * it.height + oldLw * asp;
+    t.sizePct = Number($('mSize').value);
+    const newLw = short * t.sizePct / 100;
+    t.xFrac = (right - newLw) / it.width;
+    t.yFrac = (bottom - newLw * asp) / it.height;
+    t.noLogo = false; $('mNoLogo').checked = false;
+    it.cfg = itemConfig(it, getRules(currentProfile));
+    $('mSizeVal').textContent = toFa(t.sizePct.toFixed(1)) + '٪';
+    modalDraw(); scheduleModalQC();
+  });
+  $('mNoLogo').addEventListener('change', () => {
+    const it = uploadedFiles[modalIdx]; if (!it) return;
+    ensureTweak(it);
+    it.tweak.noLogo = $('mNoLogo').checked;
+    it.cfg = itemConfig(it, getRules(currentProfile));
+    modalDraw(); scheduleModalQC();
+  });
+  $('mReset').onclick = () => {
+    const it = uploadedFiles[modalIdx]; if (!it) return;
+    it.tweak = null;
+    it.cfg = itemConfig(it, getRules(currentProfile));
+    it.qc = runQC(it, it.cfg);
+    renderModal();
+  };
+
+  const ba = $('mBA');
+  ba.addEventListener('pointerdown', e => {
+    if (role === 'guest' || modalIdx < 0) return;
+    const it = uploadedFiles[modalIdx];
+    ensureTweak(it);
+    modalDrag = { x: e.clientX, y: e.clientY, xf: it.tweak.xFrac, yf: it.tweak.yFrac, rules: getRules(currentProfile) };
+    try { ba.setPointerCapture(e.pointerId); } catch (err) {}
+  });
+  ba.addEventListener('pointermove', e => {
+    if (!modalDrag) return;
+    const it = uploadedFiles[modalIdx]; if (!it) return;
+    const r = ba.getBoundingClientRect();
+    it.tweak.xFrac = modalDrag.xf + (e.clientX - modalDrag.x) / r.width;
+    it.tweak.yFrac = modalDrag.yf + (e.clientY - modalDrag.y) / r.height;
+    it.tweak.noLogo = false; $('mNoLogo').checked = false;
+    it.cfg = itemConfig(it, modalDrag.rules);
+    modalDraw();
+  });
+  const end = () => { if (!modalDrag) return; modalDrag = null; scheduleModalQC(); };
+  ba.addEventListener('pointerup', end);
+  ba.addEventListener('pointercancel', end);
+}
+function ensureTweak(it) {
+  if (it.tweak) return;
+  const short = Math.min(it.width, it.height);
+  it.tweak = {
+    xFrac: it.cfg.logoX / it.width, yFrac: it.cfg.logoY / it.height,
+    sizePct: it.cfg.logoWidth / short * 100,
+    textOffXPct: it.cfg.textOffsetX / short * 100, textOffYPct: it.cfg.textOffsetY / short * 100,
+    noLogo: false
+  };
+}
+function scheduleModalQC() {
+  clearTimeout(qcTimer);
+  qcTimer = setTimeout(() => {
+    const it = uploadedFiles[modalIdx]; if (!it) return;
+    it.qc = runQC(it, it.cfg);
+    $('mIssues').innerHTML = issuesHTML(it.qc);
+  }, 200);
+}
+function openModal(i) {
+  modalIdx = i;
+  $('modal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  $('mSafe').checked = false;
+  $('mRange').value = 100;
+  renderModal();
+}
+function closeModal() {
+  modalIdx = -1; modalDrag = null;
+  $('modal').style.display = 'none';
+  document.body.style.overflow = '';
+  if (currentTab === 'process' && currentStep === 2 && sampleConfirmed) renderReview();
+}
+function modalGo(d) {
+  const n = modalIdx + d;
+  if (n < 0 || n >= uploadedFiles.length) return;
+  modalIdx = n; renderModal();
+}
+function modalDraw() {
+  const it = uploadedFiles[modalIdx]; if (!it) return;
+  baDraw($('mBA'), it, it.cfg, { safe: $('mSafe').checked });
+  baSet($('mBA'), Number($('mRange').value));
+}
+function renderModal() {
+  const it = uploadedFiles[modalIdx]; if (!it) return;
+  $('mTitle').textContent = it.file.name;
+  const src = it.cfg.source === 'override' ? 'چینش اصلاح‌شده' : (it.cfg.source === 'tweak' ? 'تنظیم دستی' : 'چینش پیش‌فرض');
+  $('mSub').textContent = toFa(it.width) + '×' + toFa(it.height) + ' · ' + src + ' · ' + toFa(modalIdx + 1) + ' از ' + toFa(uploadedFiles.length);
+  $('mPrev').disabled = modalIdx <= 0;
+  $('mNext').disabled = modalIdx >= uploadedFiles.length - 1;
+  modalDraw();
+  $('mIssues').innerHTML = issuesHTML(it.qc);
+  const canTweak = role !== 'guest';
+  $('mTweak').style.display = canTweak ? 'block' : 'none';
+  if (canTweak) {
+    const short = Math.min(it.width, it.height);
+    const sz = it.tweak ? it.tweak.sizePct : it.cfg.logoWidth / short * 100;
+    $('mSize').value = sz;
+    $('mSizeVal').textContent = toFa(Number(sz).toFixed(1)) + '٪';
+    $('mNoLogo').checked = !!(it.tweak && it.tweak.noLogo);
+  }
+  $('mAck').innerHTML = icon('check', 16) + (it.ack ? ' تایید شد (لغو)' : ' تایید می‌کنم');
+  $('mAck').className = it.ack ? 'secondary' : '';
+  $('mReport').disabled = false;
+  $('mReport').innerHTML = icon('flag', 16) + ' گزارش چینش اشتباه';
+  $('mMsg').innerHTML = '';
+}
+
+async function reportBad(w, h, btn) {
+  btn.disabled = true;
+  btn.textContent = 'در حال ارسال...';
+  const r = await postQueued({
+    action: 'save', id: 'p_' + Date.now(), profile: currentProfile, presetName: 'report',
+    width: w, height: h, config: { v: 2, kind: 'report', ratio: w / h, w, h }
+  });
+  if (r === 'ok') btn.innerHTML = icon('check', 16) + ' گزارش شد';
+  else if (r === 'queued') btn.innerHTML = icon('clock', 16) + ' در صف ارسال (بعد از وصل شدن اینترنت)';
+  else { btn.innerHTML = icon('alert', 16) + ' ارسال نشد'; btn.disabled = false; }
+}
+
+// ==================== STEP 3: DOWNLOAD ====================
+function renderStep3() {
+  const items = uploadedFiles;
+  const c = { ok: 0, warn: 0, error: 0 };
+  items.forEach(i => { c[i.qc.lvl]++; });
+  const unackErr = items.filter(i => i.qc.lvl === 'error' && !i.ack).length;
+  $('dlPanel').innerHTML =
+    '<h2 class="ptitle">دانلود</h2>' +
+    '<p class="psub">خروجی‌ها به‌صورت JPG در یک فایل ZIP ذخیره می‌شوند.</p>' +
+    '<div class="stat-row">' +
+      '<div class="stat"><b>' + toFa(items.length) + '</b><span>تعداد عکس</span></div>' +
+      '<div class="stat"><b>' + toFa(c.ok) + '</b><span>بدون مشکل</span></div>' +
+      '<div class="stat"><b>' + toFa(c.warn) + '</b><span>هشدار</span></div>' +
+      '<div class="stat"><b>' + toFa(c.error) + '</b><span>نیازمند بررسی</span></div>' +
+    '</div>' +
+    (unackErr ? '<div class="status err">' + toFa(unackErr) + ' عکس هشدار قرمز دارد و هنوز تایید نشده است. می‌توانید به مرحله‌ی بررسی برگردید، یا با تایید جداگانه ادامه دهید.</div>' : '') +
+    '<div id="dlProg" style="display:none; margin-top:14px;"><div class="progress"><i id="dlBar"></i></div><div class="prog-label"><span id="dlPhase">در حال ساخت فایل‌ها...</span><span id="dlPct"></span></div></div>' +
+    '<div class="btn-row"><button id="dlBtn">' + icon('download', 16) + ' پردازش و دانلود همه (ZIP)</button><button class="secondary" onclick="goStep(2)">بازگشت به بررسی</button></div>' +
+    '<div id="dlMsg"></div>';
+  $('dlBtn').onclick = startDownload;
+}
+
+async function startDownload() {
+  const unackErr = uploadedFiles.filter(i => i.qc.lvl === 'error' && !i.ack).length;
+  if (unackErr && !confirm(toFa(unackErr) + ' عکس هشدار قرمز دارد و بررسی نشده است. با همین وضعیت ادامه می‌دهید؟')) return;
+  const btn = $('dlBtn');
+  btn.disabled = true;
+  $('dlProg').style.display = 'block';
+  const setProg = (pct, phase) => { $('dlBar').style.width = pct + '%'; $('dlPct').textContent = toFa(Math.round(pct)) + '٪'; if (phase) $('dlPhase').textContent = phase; };
+  try {
+    const zip = new JSZip();
+    const total = uploadedFiles.length;
+    const ratioMap = {};
+    for (let i = 0; i < total; i++) {
+      const item = uploadedFiles[i];
+      const canvas = document.createElement('canvas');
+      canvas.width = item.width; canvas.height = item.height;
+      drawComposite(canvas, item.img, item.cfg, 1, batchText);
+      const blob = await new Promise((resolve, reject) => {
+        canvas.toBlob(b => b ? resolve(b) : reject(new Error('toBlob null شد')), 'image/jpeg', 0.92);
+      });
+      zip.file(`output_${i + 1}_${item.file.name.replace(/\.[^.]+$/, '')}.jpg`, blob);
+      const key = item.width + 'x' + item.height;
+      ratioMap[key] = (ratioMap[key] || 0) + 1;
+      setProg((i + 1) / total * 80, 'در حال ساخت عکس‌ها...');
+      await new Promise(r => setTimeout(r, 0));
+    }
+    const content = await zip.generateAsync({ type: 'blob' }, meta => setProg(80 + meta.percent * 0.2, 'در حال فشرده‌سازی...'));
+    const url = URL.createObjectURL(content);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'output.zip';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+    setProg(100, 'تمام شد');
+    $('dlMsg').innerHTML = '<div class="status ok">' + toFa(total) + ' عکس با موفقیت ساخته شد.</div><div class="btn-row"><button onclick="resetBatch()">شروع دسته‌ی جدید</button></div>';
+    logDownload(total, ratioMap);
+  } catch (err) {
+    setStatus('dlMsg', 'err', 'خطا در ساخت فایل ZIP: ' + err.message);
+  } finally {
+    btn.disabled = false;
+  }
+}
+function resetBatch() {
+  uploadedFiles = []; sampleConfirmed = false; currentStep = 1;
+  showStep();
+}
+
+async function logDownload(imageCount, ratioMap) {
+  let ip = 'نامشخص';
+  try {
+    const ctl = new AbortController();
+    const t = setTimeout(() => ctl.abort(), 4000);
+    const ipRes = await fetch('https://api.ipify.org?format=json', { signal: ctl.signal });
+    clearTimeout(t);
+    ip = (await ipRes.json()).ip || ip;
+  } catch (err) { console.error('گرفتن IP ناموفق بود:', err); }
+  const warnings = uploadedFiles.filter(i => i.qc && i.qc.lvl === 'warn').length;
+  const errors = uploadedFiles.filter(i => i.qc && i.qc.lvl === 'error').length;
+  postQueued({
+    action: 'log', timestamp: new Date().toISOString(), ip, profile: currentProfile,
+    imageCount, ratios: JSON.stringify(ratioMap || {}), warnings, errors, role
+  });
+}
+
+// ==================== ADMIN: SHELL ====================
+const ADM_SECTIONS = [
+  ['rules', 'قوانین و آزمایش'], ['reports', 'گزارش‌ها'], ['dashboard', 'داشبورد'], ['monthly', 'گزارش ماهانه'],
+  ['history', 'تاریخچه'], ['profiles', 'پروفایل‌ها'], ['announce', 'اطلاعیه'], ['health', 'سلامت سیستم']
+];
+function fillAdmProfile() {
+  const sel = $('admProfile');
+  if (!sel) return;
+  sel.innerHTML = '';
+  Object.keys(PROFILES).forEach(k => {
+    const o = document.createElement('option');
+    o.value = k; o.textContent = PROFILES[k].name + (PROFILES[k].hidden ? ' (مخفی)' : '');
+    sel.appendChild(o);
+  });
+  sel.value = currentProfile;
+}
+function renderAdminNav() {
+  const nav = $('admNav');
+  nav.innerHTML = '';
+  const rc = getRules(currentProfile).reports.length;
+  ADM_SECTIONS.forEach(([k, l]) => {
+    const b = document.createElement('button');
+    b.className = k === adminSection ? 'on' : '';
+    b.innerHTML = esc(l) + (k === 'reports' && rc ? '<span class="cnt">' + toFa(rc) + '</span>' : '');
+    b.onclick = () => showAdminSection(k);
+    nav.appendChild(b);
+  });
+}
+function showAdminSection(name) {
+  adminSection = name;
+  document.querySelectorAll('.adm-sec').forEach(s => s.classList.remove('on'));
+  $('adm-' + name).classList.add('on');
+  renderAdminNav();
+  if (name === 'rules') {
+    syncDefSliders();
+    fetchPresets(currentProfile);
+    if (!adminImages.length) addCommonRatios(); else renderAdmin();
+  }
+  if (name === 'reports') { fetchPresets(currentProfile).then(renderReportsList); renderReportsList(); }
+  if (name === 'dashboard') renderDashboard();
+  if (name === 'monthly') initMonthly();
+  if (name === 'history') { renderHistory(); fetchPresets(currentProfile).then(renderHistory); }
+  if (name === 'profiles') renderProfilesAdmin();
+  if (name === 'announce') renderAnnounceAdmin();
+  if (name === 'health') runHealth();
+}
+
+// ==================== ADMIN: TEST IMAGES / RULES ====================
+function makeSyntheticImage(wr, hr) {
+  return new Promise(resolve => {
+    const base = 1080;
+    let w, h;
+    if (wr >= hr) { h = base; w = Math.round(base * wr / hr); }
+    else { w = base; h = Math.round(base * hr / wr); }
+    const c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    const g = c.getContext('2d');
+    const grad = g.createLinearGradient(0, 0, w, h);
+    grad.addColorStop(0, '#3a4a6b');
+    grad.addColorStop(1, '#8a6a4a');
+    g.fillStyle = grad; g.fillRect(0, 0, w, h);
+    g.strokeStyle = 'rgba(255,255,255,.12)'; g.lineWidth = 2;
+    for (let x = 0; x <= w; x += base / 6) { g.beginPath(); g.moveTo(x, 0); g.lineTo(x, h); g.stroke(); }
+    for (let y = 0; y <= h; y += base / 6) { g.beginPath(); g.moveTo(0, y); g.lineTo(w, y); g.stroke(); }
+    g.fillStyle = 'rgba(255,255,255,.28)';
+    g.beginPath(); g.ellipse(w / 2, h / 2, base * 0.22, base * 0.22, 0, 0, Math.PI * 2); g.fill();
+    g.fillStyle = 'rgba(255,255,255,.85)';
+    g.font = 'bold 64px Vazirmatn, sans-serif';
+    g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.fillText(w + '×' + h, w / 2, h / 2);
+    const img = new Image();
+    img.onload = () => resolve({ img, width: w, height: h, w, h, label: wr + ':' + hr, ratio: w / h, synthetic: true });
+    img.src = c.toDataURL('image/jpeg', 0.7);
+  });
+}
+async function addCommonRatios() {
+  const real = adminImages.filter(i => !i.synthetic);
+  const synth = [];
+  for (const [wr, hr] of COMMON_RATIOS) synth.push(await makeSyntheticImage(wr, hr));
+  adminImages = [...synth, ...real];
+  adminSel = -1; ed = null;
+  $('adminEditor').style.display = 'none';
+  renderAdmin();
+}
+function initAdminFile() {
+  $('adminFileInput').addEventListener('change', async e => {
+    for (const f of Array.from(e.target.files)) {
+      try {
+        const img = await loadImageFromFile(f);
+        adminImages.push({
+          img, width: img.naturalWidth, height: img.naturalHeight, w: img.naturalWidth, h: img.naturalHeight,
+          label: img.naturalWidth + '×' + img.naturalHeight, ratio: img.naturalWidth / img.naturalHeight, synthetic: false
+        });
+      } catch (err) { console.error(err); }
+    }
+    e.target.value = '';
+    renderAdmin();
+  });
+}
+function clearAdminImages() {
+  adminImages = []; adminSel = -1; ed = null;
+  $('adminEditor').style.display = 'none';
+  renderAdmin();
+}
+
+function syncDefSliders() {
+  $('defSize').value = adminDef.sizePct;
+  $('defMx').value = adminDef.marginXPct;
+  $('defMy').value = adminDef.marginYPct;
+  $('defText').value = adminDef.textScale;
+  $('defVig').value = adminDef.vignette;
+  $('defSizeVal').innerText = adminDef.sizePct + '%';
+  $('defMxVal').innerText = adminDef.marginXPct + '%';
+  $('defMyVal').innerText = adminDef.marginYPct + '%';
+  $('defTextVal').innerText = adminDef.textScale + '%';
+  $('defVigVal').innerText = adminDef.vignette + '%';
+  const hasText = PROFILES[currentProfile].hasText;
+  $('defTextRow').style.display = hasText ? 'block' : 'none';
+  document.querySelectorAll('.ed-text-row').forEach(el => { el.style.display = hasText ? 'block' : 'none'; });
+}
+function onDefChange() {
+  adminDef = {
+    sizePct: Number($('defSize').value),
+    marginXPct: Number($('defMx').value),
+    marginYPct: Number($('defMy').value),
+    textScale: Number($('defText').value),
+    vignette: Number($('defVig').value)
+  };
+  adminDirty = true;
+  $('defSizeVal').innerText = adminDef.sizePct + '%';
+  $('defMxVal').innerText = adminDef.marginXPct + '%';
+  $('defMyVal').innerText = adminDef.marginYPct + '%';
+  $('defTextVal').innerText = adminDef.textScale + '%';
+  $('defVigVal').innerText = adminDef.vignette + '%';
+  if (adminSel >= 0) {
+    const it = adminImages[adminSel];
+    if (resolveConfig(it.w, it.h, adminRules()).source === 'default') initEd(adminSel);
+  }
+  scheduleAdminRender();
+}
+function scheduleAdminRender() {
+  if (adminRenderQueued) return;
+  adminRenderQueued = true;
+  requestAnimationFrame(() => { adminRenderQueued = false; renderAdmin(); });
+}
+async function saveDefaultRule() {
+  setStatus('defStatus', 'info', 'در حال ذخیره...');
+  try {
+    const result = await postToSheet({
+      action: 'save', id: 'p_' + Date.now(), profile: currentProfile, presetName: 'default',
+      width: 1, height: 1,
+      config: { v: 2, kind: 'default', ...adminDef }
+    });
+    if (result.success) {
+      adminDirty = false;
+      setStatus('defStatus', 'ok', 'قانون پیش‌فرض ذخیره شد.');
+      await fetchPresets(currentProfile);
+    } else {
+      setStatus('defStatus', 'warn', 'خطا در ذخیره: ' + (result.error || ''));
+    }
+  } catch (err) {
+    setStatus('defStatus', 'warn', 'خطا: ' + (err && err.message ? err.message : err));
+  }
+}
+
+function adminRules() { return { def: adminDef, overrides: getRules(currentProfile).overrides }; }
+function renderAdmin() {
+  renderAdminGrid();
+  if (adminSel >= 0 && ed) redrawEditor();
+}
+function renderAdminGrid() {
+  const holder = $('adminGrid');
+  holder.innerHTML = '';
+  if (!adminImages.length) { holder.innerHTML = '<div class="status info">تصویر تستی وجود ندارد.</div>'; return; }
+  const rules = adminRules();
+  const safe = $('admSafe').checked;
+  const grid = document.createElement('div');
+  grid.className = 'tiles';
+  adminImages.forEach((it, i) => {
+    const cfg = resolveConfig(it.w, it.h, rules);
+    const tile = document.createElement('div');
+    tile.className = 'tile' + (i === adminSel ? ' sel' : '');
+    tile.onclick = () => selectAdmin(i);
+    const c = document.createElement('canvas');
+    c.width = 220; c.height = Math.round(220 * it.h / it.w);
+    drawComposite(c, it.img, cfg, c.width / it.w, DEMO_TEXT);
+    if (safe) drawSafeOverlay(c.getContext('2d'), c.width, c.height, it.w / it.h);
+    const meta = document.createElement('div');
+    meta.className = 'tile-meta';
+    meta.innerHTML = '<span dir="ltr">' + esc(it.label) + '</span><span class="badge ' + (cfg.source === 'override' ? 'ovr' : '') + '">' + (cfg.source === 'override' ? 'اصلاح‌شده' : 'پیش‌فرض') + '</span>';
+    tile.appendChild(c); tile.appendChild(meta);
+    grid.appendChild(tile);
+  });
+  holder.appendChild(grid);
+}
+
+function initEd(i) {
+  const it = adminImages[i];
+  const cfg = resolveConfig(it.w, it.h, adminRules());
+  const short = Math.min(it.w, it.h);
+  ed = {
+    xFrac: cfg.logoX / it.w, yFrac: cfg.logoY / it.h,
+    sizePct: cfg.logoWidth / short * 100,
+    textOffXPct: cfg.textOffsetX / short * 100, textOffYPct: cfg.textOffsetY / short * 100
+  };
+  $('edSize').value = ed.sizePct;
+  $('edTxtX').value = ed.textOffXPct;
+  $('edTxtY').value = ed.textOffYPct;
+}
+function selectAdmin(i) {
+  adminSel = i;
+  initEd(i);
+  $('edStatus').innerHTML = '';
+  $('adminEditor').style.display = 'block';
+  renderAdminGrid();
+  redrawEditor();
+  $('adminEditor').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+function edConfig(it) {
+  const short = Math.min(it.w, it.h);
+  return {
+    logoX: ed.xFrac * it.w, logoY: ed.yFrac * it.h, logoWidth: short * ed.sizePct / 100,
+    textScale: adminDef.textScale, vignette: adminDef.vignette,
+    textOffsetX: short * ed.textOffXPct / 100, textOffsetY: short * ed.textOffYPct / 100
+  };
+}
+function redrawEditor() {
+  const it = adminImages[adminSel];
+  if (!it || !ed) return;
+  const canvas = $('edCanvas');
+  const cw = Math.min(it.w, 900);
+  canvas.width = cw;
+  canvas.height = Math.round(cw * it.h / it.w);
+  drawComposite(canvas, it.img, edConfig(it), cw / it.w, DEMO_TEXT);
+  if ($('admSafe').checked) drawSafeOverlay(canvas.getContext('2d'), canvas.width, canvas.height, it.w / it.h);
+  $('edTitle').innerText = it.label + ' (' + it.w + '×' + it.h + ')';
+  const saved = resolveConfig(it.w, it.h, getRules(currentProfile)).source;
+  $('edBadge').innerText = saved === 'override' ? 'اصلاح ذخیره‌شده' : 'فعلاً پیش‌فرض';
+  $('edSizeVal').innerText = ed.sizePct.toFixed(1) + '%';
+  $('edTxtXVal').innerText = ed.textOffXPct.toFixed(1) + '%';
+  $('edTxtYVal').innerText = ed.textOffYPct.toFixed(1) + '%';
+}
+function onEdChange() {
+  const it = adminImages[adminSel];
+  if (!it || !ed) return;
+  const short = Math.min(it.w, it.h);
+  const asp = logoAspect();
+  const oldLw = short * ed.sizePct / 100;
+  const right = ed.xFrac * it.w + oldLw;
+  const bottom = ed.yFrac * it.h + oldLw * asp;
+  ed.sizePct = Number($('edSize').value);
+  ed.textOffXPct = Number($('edTxtX').value);
+  ed.textOffYPct = Number($('edTxtY').value);
+  const newLw = short * ed.sizePct / 100;
+  ed.xFrac = (right - newLw) / it.w;
+  ed.yFrac = (bottom - newLw * asp) / it.h;
+  redrawEditor();
+}
+function setupEditorDrag() {
+  const canvas = $('edCanvas');
+  canvas.addEventListener('pointerdown', e => {
+    if (!ed) return;
+    edDrag = { x: e.clientX, y: e.clientY, xf: ed.xFrac, yf: ed.yFrac };
+    try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
+  });
+  canvas.addEventListener('pointermove', e => {
+    if (!edDrag || !ed) return;
+    const rect = canvas.getBoundingClientRect();
+    ed.xFrac = edDrag.xf + (e.clientX - edDrag.x) / rect.width;
+    ed.yFrac = edDrag.yf + (e.clientY - edDrag.y) / rect.height;
+    redrawEditor();
+  });
+  const end = () => { edDrag = null; };
+  canvas.addEventListener('pointerup', end);
+  canvas.addEventListener('pointercancel', end);
+}
+
+async function saveOverride() {
+  const it = adminImages[adminSel];
+  if (!it || !ed) return;
+  const r4 = n => Math.round(n * 10000) / 10000;
+  setStatus('edStatus', 'info', 'در حال ذخیره...');
+  try {
+    const result = await postToSheet({
+      action: 'save', id: 'p_' + Date.now(), profile: currentProfile, presetName: it.w + 'x' + it.h,
+      width: it.w, height: it.h,
+      config: {
+        v: 2, kind: 'ratio', ratio: it.ratio,
+        xFrac: r4(ed.xFrac), yFrac: r4(ed.yFrac), sizePct: r4(ed.sizePct),
+        textOffXPct: r4(ed.textOffXPct), textOffYPct: r4(ed.textOffYPct)
+      }
+    });
+    if (result.success) {
+      setStatus('edStatus', 'ok', 'ثبت شد. از این به بعد برای این نسبت و نسبت‌های نزدیکش اعمال می‌شود.');
+      await fetchPresets(currentProfile);
+    } else {
+      setStatus('edStatus', 'warn', 'خطا در ذخیره: ' + (result.error || ''));
+    }
+  } catch (err) {
+    setStatus('edStatus', 'warn', 'خطا: ' + (err && err.message ? err.message : err));
+  }
+}
+async function removeOverride() {
+  const it = adminImages[adminSel];
+  if (!it) return;
+  const existing = nearestOverride(it.ratio, getRules(currentProfile).overrides);
+  if (!existing) {
+    initEd(adminSel); redrawEditor();
+    setStatus('edStatus', 'info', 'چینش به حالت پیش‌فرض برگشت.');
+    return;
+  }
+  setStatus('edStatus', 'info', 'در حال حذف...');
+  try {
+    const result = await postToSheet({
+      action: 'save', id: 'p_' + Date.now(), profile: currentProfile, presetName: 'removed',
+      width: Math.round(existing.ratio * 1000), height: 1000,
+      config: { v: 2, kind: 'ratio', ratio: existing.ratio, removed: true }
+    });
+    if (result.success) {
+      await fetchPresets(currentProfile);
+      initEd(adminSel); redrawEditor();
+      setStatus('edStatus', 'ok', 'اصلاح حذف شد و این نسبت به قانون پیش‌فرض برگشت.');
+    } else {
+      setStatus('edStatus', 'warn', 'خطا در حذف: ' + (result.error || ''));
+    }
+  } catch (err) {
+    setStatus('edStatus', 'warn', 'خطا: ' + (err && err.message ? err.message : err));
+  }
+}
+
+// ==================== ADMIN: REPORTS ====================
+function renderReportsList() {
+  const holder = $('reportsList');
+  const reports = getRules(currentProfile).reports;
+  renderAdminNav();
+  if (!reports.length) { holder.innerHTML = '<div class="status ok" style="margin-top:0;">گزارشی برای این پروفایل وجود ندارد.</div>'; return; }
+  holder.innerHTML = '';
+  const tbl = document.createElement('table');
+  tbl.className = 'tbl';
+  tbl.innerHTML = '<thead><tr><th>ابعاد</th><th>نسبت</th><th>زمان گزارش</th><th></th></tr></thead>';
+  const tb = document.createElement('tbody');
+  reports.slice().sort((a, b) => b.ts - a.ts).forEach(r => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td>' + toFa(r.w) + '×' + toFa(r.h) + '</td><td>' + ratioLabel(r.ratio) + '</td><td>' + (r.ts > 1e12 ? fmtDateTime(r.ts) : '—') + '</td><td></td>';
+    const b = document.createElement('button');
+    b.className = 'secondary sm'; b.textContent = 'باز کردن برای اصلاح';
+    b.onclick = () => addReportTile(r.w, r.h);
+    tr.lastChild.appendChild(b);
+    tb.appendChild(tr);
+  });
+  tbl.appendChild(tb);
+  holder.appendChild(tbl);
+}
+async function addReportTile(w, h) {
+  const it = await makeSyntheticImage(w, h);
+  it.label = w + '×' + h;
+  it.synthetic = false;
+  adminImages.unshift(it);
+  showAdminSection('rules');
+  selectAdmin(0);
+}
+
+// ==================== ADMIN: DASHBOARD + MONTHLY ====================
+function aggregateLogs(logs) {
+  const out = { downloads: logs.length, images: 0, byProfile: {}, ratios: {}, daily: {}, warnings: 0, errors: 0 };
+  logs.forEach(l => {
+    out.images += l.count;
+    out.byProfile[l.profile] = (out.byProfile[l.profile] || 0) + l.count;
+    Object.entries(l.ratios).forEach(([k, v]) => { out.ratios[k] = (out.ratios[k] || 0) + Number(v || 0); });
+    const dk = new Date(l.ts).toDateString();
+    out.daily[dk] = (out.daily[dk] || 0) + l.count;
+    out.warnings += l.warnings; out.errors += l.errors;
+  });
+  return out;
+}
+function barsHTML(entries, fmtLabel) {
+  const max = Math.max(1, ...entries.map(e => e[1]));
+  return entries.map(([k, v]) =>
+    '<div class="bar-row"><span class="lbl">' + (fmtLabel ? fmtLabel(k) : esc(k)) + '</span><span class="bar"><i style="width:' + Math.round(v / max * 100) + '%"></i></span><span class="val">' + toFa(v) + '</span></div>'
+  ).join('');
+}
+function profileName(k) { return PROFILES[k] ? PROFILES[k].name : (k || '—'); }
+
+async function renderDashboard() {
+  const box = $('dashBody');
+  $('dashRefresh').innerHTML = icon('refresh', 15) + ' تازه‌سازی';
+  box.innerHTML = '<div class="status info" style="margin-top:0;">در حال بارگیری داده‌ها...</div>';
+  let logs;
+  try { logs = await fetchLogs(Date.now() - 30 * 864e5); }
+  catch (err) { box.innerHTML = '<div class="status warn" style="margin-top:0;">' + esc(err.message) + '</div>'; return; }
+  await loadAllProfiles();
+  let openReports = 0, overridesCount = 0;
+  Object.keys(PROFILES).forEach(k => { const g = getRules(k); openReports += g.reports.length; overridesCount += g.overrides.length; });
+  const agg = aggregateLogs(logs);
+  const days = [];
+  for (let i = 13; i >= 0; i--) {
+    const d = new Date(Date.now() - i * 864e5);
+    days.push([fmtDate(d, { month: 'numeric', day: 'numeric' }), agg.daily[d.toDateString()] || 0]);
+  }
+  const profEntries = Object.entries(agg.byProfile).sort((a, b) => b[1] - a[1]);
+  const ratioEntries = Object.entries(agg.ratios).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  box.innerHTML =
+    '<div class="stat-row">' +
+      '<div class="stat"><b>' + toFa(agg.downloads) + '</b><span>دانلود (ZIP)</span></div>' +
+      '<div class="stat"><b>' + toFa(agg.images) + '</b><span>عکس پردازش‌شده</span></div>' +
+      '<div class="stat"><b>' + toFa(openReports) + '</b><span>گزارش باز (چینش اشتباه)</span></div>' +
+      '<div class="stat"><b>' + toFa(overridesCount) + '</b><span>اصلاح ثبت‌شده برای نسبت‌ها</span></div>' +
+    '</div>' +
+    (agg.downloads ? '' : '<div class="status info">هنوز دانلودی ثبت نشده است. ابعاد و هشدارها فقط برای دانلودهای بعد از نسخه‌ی ۲ ثبت می‌شوند.</div>') +
+    '<div class="cols2"><div><h3 class="ptitle">عکس در ۱۴ روز اخیر</h3>' + barsHTML(days) + '</div>' +
+    '<div><h3 class="ptitle">به تفکیک پروفایل</h3>' + (profEntries.length ? barsHTML(profEntries, k => esc(profileName(k))) : '<div class="muted small">—</div>') +
+    '<h3 class="ptitle" style="margin-top:18px;">پرکاربردترین ابعاد</h3>' + (ratioEntries.length ? barsHTML(ratioEntries) : '<div class="muted small">—</div>') + '</div></div>';
+}
+
+function jparts(d) {
+  const p = new Intl.DateTimeFormat('en-US-u-ca-persian', { year: 'numeric', month: 'numeric', day: 'numeric' }).formatToParts(d);
+  const o = {};
+  p.forEach(x => { o[x.type] = x.value; });
+  return { y: parseInt(o.year, 10), m: parseInt(o.month, 10), d: parseInt(o.day, 10) };
+}
+function monthStart(date) {
+  const c = new Date(date); c.setHours(0, 0, 0, 0);
+  let guard = 0;
+  while (jparts(c).d > 1 && guard++ < 40) c.setDate(c.getDate() - 1);
+  return c;
+}
+function monthOptions() {
+  const opts = [];
+  try {
+    let cur = monthStart(new Date());
+    for (let i = 0; i < 6; i++) {
+      const e = new Date(cur); e.setDate(e.getDate() + 32);
+      const end = monthStart(e);
+      opts.push({ label: fmtDate(cur, { year: 'numeric', month: 'long' }), start: cur.getTime(), end: end.getTime() });
+      cur = monthStart(new Date(cur.getTime() - 86400000));
+    }
+  } catch (err) {
+    const now = new Date();
+    for (let i = 0; i < 6; i++) {
+      const s = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const e = new Date(now.getFullYear(), now.getMonth() - i + 1, 1);
+      opts.push({ label: s.toLocaleDateString(undefined, { year: 'numeric', month: 'long' }), start: s.getTime(), end: e.getTime() });
+    }
+  }
+  return opts;
+}
+let monthOpts = [];
+function initMonthly() {
+  monthOpts = monthOptions();
+  const sel = $('monthSel');
+  sel.innerHTML = '';
+  monthOpts.forEach((o, i) => { const op = document.createElement('option'); op.value = i; op.textContent = o.label; sel.appendChild(op); });
+  $('printBtn').innerHTML = icon('printer', 15) + ' چاپ / ذخیره PDF';
+  renderMonthly();
+}
+async function renderMonthly() {
+  const box = $('monthBody');
+  const o = monthOpts[Number($('monthSel').value) || 0];
+  if (!o) return;
+  box.innerHTML = '<div class="status info">در حال بارگیری داده‌ها...</div>';
+  let logs;
+  try { logs = (await fetchLogs(o.start)).filter(l => l.ts >= o.start && l.ts < o.end); }
+  catch (err) { box.innerHTML = '<div class="status warn">' + esc(err.message) + '</div>'; return; }
+  await loadAllProfiles();
+  let reportsOpen = 0;
+  Object.keys(PROFILES).forEach(k => { reportsOpen += getRules(k).reports.length; });
+  const agg = aggregateLogs(logs);
+  const profRows = Object.entries(agg.byProfile).sort((a, b) => b[1] - a[1])
+    .map(([k, v]) => '<tr><td>' + esc(profileName(k)) + '</td><td>' + toFa(v) + '</td></tr>').join('');
+  const ratioRows = Object.entries(agg.ratios).sort((a, b) => b[1] - a[1]).slice(0, 8)
+    .map(([k, v]) => '<tr><td dir="ltr" style="text-align:right;">' + esc(k) + '</td><td>' + toFa(v) + '</td></tr>').join('');
+  box.innerHTML =
+    '<h3>گزارش ماهانه‌ی سیستم بچ لوگو — ' + esc(o.label) + '</h3>' +
+    '<div class="muted small">تاریخ تهیه: ' + fmtDate(Date.now()) + ' · نسخه‌ی ' + toFa(APP_VERSION) + '</div>' +
+    '<div class="stat-row">' +
+      '<div class="stat"><b>' + toFa(agg.downloads) + '</b><span>دانلود (ZIP)</span></div>' +
+      '<div class="stat"><b>' + toFa(agg.images) + '</b><span>عکس پردازش‌شده</span></div>' +
+      '<div class="stat"><b>' + toFa(agg.warnings) + '</b><span>عکس دارای هشدار</span></div>' +
+      '<div class="stat"><b>' + toFa(agg.errors) + '</b><span>عکس نیازمند بررسی</span></div>' +
+    '</div>' +
+    (agg.downloads ? '' : '<div class="status info">در این ماه دانلودی ثبت نشده است.</div>') +
+    '<div class="cols2"><div><h3 class="ptitle">به تفکیک پروفایل</h3><table class="tbl"><thead><tr><th>پروفایل</th><th>عکس</th></tr></thead><tbody>' + (profRows || '<tr><td colspan="2" class="muted">—</td></tr>') + '</tbody></table></div>' +
+    '<div><h3 class="ptitle">پرکاربردترین ابعاد</h3><table class="tbl"><thead><tr><th>ابعاد</th><th>عکس</th></tr></thead><tbody>' + (ratioRows || '<tr><td colspan="2" class="muted">—</td></tr>') + '</tbody></table></div></div>' +
+    '<p class="muted small" style="margin-top:14px;">گزارش‌های بازِ چینش اشتباه در حال حاضر: ' + toFa(reportsOpen) + '</p>';
+}
+function printReport() {
+  document.body.classList.add('print-report');
+  window.onafterprint = () => { document.body.classList.remove('print-report'); window.onafterprint = null; };
+  window.print();
+  setTimeout(() => document.body.classList.remove('print-report'), 1500);
+}
+
+// ==================== ADMIN: HISTORY + BACKUP ====================
+function getHistory(profileKey) {
+  const list = presetsCache[profileKey] || [];
+  return list.map((r, i) => ({ ts: idTs(r, i), c: r.config }))
+    .filter(x => x.c && x.c.v === 2 && (x.c.kind === 'default' || x.c.kind === 'ratio'))
+    .sort((a, b) => b.ts - a.ts);
+}
+function describeRow(c) {
+  if (c.kind === 'default') {
+    return 'قانون پیش‌فرض: اندازه ' + toFa(c.sizePct) + '٪ · فاصله ' + toFa(c.marginXPct) + '٪ / ' + toFa(c.marginYPct) + '٪' + (c.vignette ? ' · وینیت ' + toFa(c.vignette) + '٪' : '');
+  }
+  if (c.removed) return 'حذف اصلاح نسبت ' + ratioLabel(c.ratio);
+  return 'اصلاح نسبت ' + ratioLabel(c.ratio) + ' · اندازه ' + toFa(Number(c.sizePct).toFixed(1)) + '٪';
+}
+function renderHistory() {
+  $('backupBtn').innerHTML = icon('download', 15) + ' خروجی پشتیبان';
+  const hist = getHistory(currentProfile).slice(0, 60);
+  const holder = $('historyBody');
+  if (!hist.length) { holder.innerHTML = '<div class="status info" style="margin-top:0;">هنوز تغییری برای این پروفایل ثبت نشده است.</div>'; return; }
+  holder.innerHTML = '';
+  const tbl = document.createElement('table');
+  tbl.className = 'tbl';
+  tbl.innerHTML = '<thead><tr><th>زمان</th><th>تغییر</th><th></th></tr></thead>';
+  const tb = document.createElement('tbody');
+  hist.forEach((h, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td>' + (h.ts > 1e12 ? fmtDateTime(h.ts) : '—') + '</td><td>' + describeRow(h.c) + '</td><td></td>';
+    const b = document.createElement('button');
+    b.className = 'secondary sm'; b.textContent = 'برگشت به این نسخه';
+    b.onclick = () => rollbackTo(i);
+    tr.lastChild.appendChild(b);
+    tb.appendChild(tr);
+  });
+  tbl.appendChild(tb);
+  holder.appendChild(tbl);
+}
+async function rollbackTo(idx) {
+  const h = getHistory(currentProfile)[idx];
+  if (!h) return;
+  if (!confirm('این قانون به همین نسخه برگردانده شود؟')) return;
+  const c = { ...h.c };
+  delete c.ts;
+  setStatus('historyStatus', 'info', 'در حال بازگردانی...');
+  try {
+    const result = await postToSheet({
+      action: 'save', id: 'p_' + Date.now(), profile: currentProfile, presetName: 'rollback',
+      width: c.kind === 'default' ? 1 : Math.round(c.ratio * 1000), height: c.kind === 'default' ? 1 : 1000,
+      config: c
+    });
+    if (result.success) {
+      await fetchPresets(currentProfile);
+      renderHistory();
+      setStatus('historyStatus', 'ok', 'قانون به نسخه‌ی انتخابی برگردانده شد.');
+    } else {
+      setStatus('historyStatus', 'warn', 'خطا: ' + (result.error || ''));
+    }
+  } catch (err) {
+    setStatus('historyStatus', 'warn', 'خطا: ' + (err && err.message ? err.message : err));
+  }
+}
+function exportBackup() {
+  const rows = (presetsCache[currentProfile] || []).filter(r => r.config && r.config.v === 2 && (r.config.kind === 'default' || r.config.kind === 'ratio'));
+  const blob = new Blob([JSON.stringify({ app: 'batch-logo', version: APP_VERSION, profile: currentProfile, exportedAt: new Date().toISOString(), rows }, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'backup_' + currentProfile + '_' + new Date().toISOString().slice(0, 10) + '.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 3000);
+}
+
+// ==================== ADMIN: PROFILES + ANNOUNCEMENT ====================
+function renderProfilesAdmin() {
+  const holder = $('profilesBody');
+  holder.innerHTML = '';
+  Object.keys(PROFILES).forEach(k => {
+    const p = PROFILES[k];
+    const row = document.createElement('div');
+    row.className = 'prof-row';
+    row.innerHTML =
+      '<div class="field" style="margin:0;"><label for="pn_' + k + '">نام نمایشی</label><input type="text" id="pn_' + k + '" value="' + esc(p.name) + '"></div>' +
+      '<div class="field" style="margin:0;"><label>مسیر لوگو</label><div class="muted small" dir="ltr" style="text-align:right; padding-top:8px;">' + esc(p.logoPath) + '</div></div>' +
+      '<div class="field" style="margin:0;"><label for="pc_' + k + '">رنگ شاخص</label><input type="color" id="pc_' + k + '" value="' + esc(p.accent) + '"></div>' +
+      '<label class="chk" style="margin:0 0 10px;"><input type="checkbox" id="ph_' + k + '"' + (p.hidden ? ' checked' : '') + '> مخفی</label>' +
+      '<button class="sm" onclick="saveProfileCfg(\'' + k + '\')">ذخیره</button>';
+    holder.appendChild(row);
+  });
+}
+async function saveProfileCfg(k) {
+  const name = $('pn_' + k).value.trim() || PROFILE_BASE[k].name;
+  const accent = $('pc_' + k).value;
+  const hidden = $('ph_' + k).checked;
+  const visibleOthers = Object.keys(PROFILES).filter(x => x !== k && !PROFILES[x].hidden).length;
+  if (hidden && !visibleOthers) { setStatus('profilesStatus', 'warn', 'حداقل یک پروفایل باید قابل نمایش بماند.'); return; }
+  setStatus('profilesStatus', 'info', 'در حال ذخیره...');
+  try {
+    const r = await postSys({ v: 2, kind: 'profilecfg', key: k, name, accent, hidden });
+    if (r.success) {
+      sysCfg.profiles[k] = { v: 2, kind: 'profilecfg', key: k, name, accent, hidden };
+      try { localStorage.setItem('sys2', JSON.stringify(sysCfg)); } catch (err) {}
+      applySys();
+      setStatus('profilesStatus', 'ok', 'تنظیمات پروفایل ذخیره شد.');
+    } else setStatus('profilesStatus', 'warn', 'خطا: ' + (r.error || ''));
+  } catch (err) { setStatus('profilesStatus', 'warn', 'خطا: ' + (err && err.message ? err.message : err)); }
+}
+function renderAnnounceAdmin() {
+  const a = sysCfg.announce || {};
+  $('annText').value = a.text || '';
+  $('annLevel').value = a.level || 'info';
+  $('annActive').checked = !!a.active;
+}
+async function saveAnnounce() {
+  const cfg = { v: 2, kind: 'announce', text: $('annText').value.trim(), level: $('annLevel').value, active: $('annActive').checked };
+  setStatus('annStatus', 'info', 'در حال ذخیره...');
+  try {
+    const r = await postSys(cfg);
+    if (r.success) {
+      sysCfg.announce = cfg;
+      try { localStorage.setItem('sys2', JSON.stringify(sysCfg)); } catch (err) {}
+      renderAnnounce();
+      setStatus('annStatus', 'ok', 'اطلاعیه ذخیره شد.');
+    } else setStatus('annStatus', 'warn', 'خطا: ' + (r.error || ''));
+  } catch (err) { setStatus('annStatus', 'warn', 'خطا: ' + (err && err.message ? err.message : err)); }
+}
+
+// ==================== ADMIN: HEALTH ====================
+function testImg(src, ms) {
+  return new Promise(res => {
+    const i = new Image();
+    const t = setTimeout(() => res(false), ms || 6000);
+    i.onload = () => { clearTimeout(t); res(true); };
+    i.onerror = () => { clearTimeout(t); res(false); };
+    i.src = src + (src.indexOf('?') >= 0 ? '&' : '?') + 'hc=' + Date.now();
+  });
+}
+async function runHealth() {
+  const body = $('healthBody');
+  $('healthBtn').innerHTML = icon('refresh', 15) + ' بررسی دوباره';
+  body.innerHTML = '<div class="status info" style="margin-top:0;">در حال بررسی...</div>';
+  const out = [];
+  const add = (st, title, msg) => out.push({ st, title, msg });
+
+  for (const k of Object.keys(PROFILES)) {
+    const ok = await testImg(PROFILES[k].logoPath);
+    add(ok ? 'ok' : 'bad', 'لوگوی «' + PROFILES[k].name + '»', ok ? 'فایل لود شد.' : 'فایل پیدا نشد: ' + PROFILES[k].logoPath);
+  }
+  const loginOk = await testImg('assets/logos/login-logo.png');
+  add(loginOk ? 'ok' : 'mid', 'لوگوی صفحه‌ی ورود', loginOk ? 'فایل لود شد.' : 'assets/logos/login-logo.png پیدا نشد (به‌جای آن نشانک متنی نمایش داده می‌شود).');
+  try {
+    await new FontFace('KalamehHealth', 'url(assets/fonts/Kalameh.ttf)').load();
+    add('ok', 'فونت کلمه', 'فایل فونت لود شد.');
+  } catch (err) { add('bad', 'فونت کلمه', 'assets/fonts/Kalameh.ttf لود نشد؛ متن هیئت با فونت پیش‌فرض رسم می‌شود.'); }
+
+  try {
+    const res = await fetch(`${APPS_SCRIPT_URL}?profile=${encodeURIComponent(currentProfile)}`);
+    const json = await res.json();
+    if (json.success) {
+      const rows = json.data.map(r => parseConfig(r.config));
+      const bad = rows.filter(c => !c).length;
+      const v2 = rows.filter(c => c && c.v === 2).length;
+      add('ok', 'اتصال به شیت', 'پاسخ سالم دریافت شد (' + toFa(json.data.length) + ' ردیف برای این پروفایل).');
+      add(bad ? 'mid' : 'ok', 'قوانین ذخیره‌شده', toFa(v2) + ' ردیف نسخه‌ی ۲' + (bad ? ' و ' + toFa(bad) + ' ردیف ناخوانا' : '') + '.');
+    } else add('bad', 'اتصال به شیت', 'اسکریپت خطا برگرداند: ' + (json.error || 'نامشخص'));
+  } catch (err) { add('bad', 'اتصال به شیت', 'درخواست ناموفق بود: ' + err.message); }
+
+  try {
+    const res = await fetch(`${APPS_SCRIPT_URL}?profile=${SYSTEM_KEY}`);
+    const json = await res.json();
+    add(json.success ? 'ok' : 'bad', 'تنظیمات سیستم (نام پروفایل‌ها و اطلاعیه)', json.success ? 'خوانده شد.' : 'خوانده نشد.');
+  } catch (err) { add('bad', 'تنظیمات سیستم', 'درخواست ناموفق بود: ' + err.message); }
+
+  try {
+    await fetchLogs(Date.now() - 864e5);
+    add('ok', 'لاگ دانلودها (داشبورد)', 'اپ اسکریپت به‌روز است.');
+  } catch (err) { add('mid', 'لاگ دانلودها (داشبورد)', err.message); }
+
+  const q = loadQueue().length;
+  add(q ? 'mid' : 'ok', 'صف ارسال آفلاین', q ? toFa(q) + ' مورد منتظر ارسال است.' : 'صف خالی است.');
+  add(('serviceWorker' in navigator && navigator.serviceWorker.controller) ? 'ok' : 'mid', 'حالت آفلاین (Service Worker)',
+    ('serviceWorker' in navigator && navigator.serviceWorker.controller) ? 'فعال است.' : 'فعال نیست؛ برنامه همچنان کار می‌کند ولی بدون اینترنت باز نمی‌شود.');
+  add('ok', 'نسخه‌ی برنامه', toFa(APP_VERSION));
+
+  const ic = { ok: 'check', bad: 'xcircle', mid: 'alert' };
+  body.innerHTML = out.map(o =>
+    '<div class="health-item"><span class="' + o.st + '">' + icon(ic[o.st], 18) + '</span><div><b>' + esc(o.title) + '</b><div class="muted small">' + esc(o.msg) + '</div></div></div>'
+  ).join('');
+}
+
+// ==================== GUIDE (first run) ====================
+const GUIDE_SLIDES = [
+  { t: 'عکس‌ها را آپلود کنید', d: 'پروفایل را انتخاب کنید و عکس‌ها را رها کنید یا Paste کنید. عکس‌ها از دستگاه شما خارج نمی‌شوند.' },
+  { t: 'نمونه را تایید و عکس‌ها را بررسی کنید', d: 'اول چینش عکس اول را می‌بینید. بعد عکس‌های مشکل‌دار با نشانه‌ی زرد یا قرمز بالای لیست می‌آیند.' },
+  { t: 'دانلود', d: 'همه‌چیز را در یک فایل ZIP بگیرید. اگر چینشی اشتباه بود، دکمه‌ی گزارش را بزنید تا ادمین اصلاحش کند.' }
+];
+let guideIdx = 0;
+function openGuide() { guideIdx = 0; $('guide').style.display = 'flex'; renderGuide(); }
+function renderGuide() {
+  const s = GUIDE_SLIDES[guideIdx];
+  $('guideBody').innerHTML =
+    '<div class="muted small">' + toFa(guideIdx + 1) + ' از ' + toFa(GUIDE_SLIDES.length) + '</div>' +
+    '<h2 class="ptitle" style="font-size:18px; margin:8px 0;">' + esc(s.t) + '</h2><p class="muted">' + esc(s.d) + '</p>';
+  $('guideNext').textContent = guideIdx === GUIDE_SLIDES.length - 1 ? 'شروع' : 'بعدی';
+}
+function guideNext() {
+  if (guideIdx >= GUIDE_SLIDES.length - 1) { closeGuide(); return; }
+  guideIdx++; renderGuide();
+}
+function closeGuide() {
+  $('guide').style.display = 'none';
+  try { localStorage.setItem('guide2', '1'); } catch (err) {}
+}
+
+// ==================== ICONS INIT + BOOT ====================
+function initIcons() {
+  $('logoutBtn').innerHTML = icon('logout', 18);
+}
+async function boot() {
+  initTheme();
+  initIcons();
+  initDropzone();
+  initModal();
+  initAdminFile();
+  setupEditorDrag();
+  try { const lp = localStorage.getItem('lastProfile2'); if (lp && PROFILES[lp]) currentProfile = lp; } catch (err) {}
+  let entered = false;
+  try { role = sessionStorage.getItem('role2') || 'guest'; entered = sessionStorage.getItem('entered2') === '1'; } catch (err) {}
+  if (entered) showApp(); else $('entry').style.display = 'flex';
+  window.addEventListener('online', () => { setConn('online'); flushQueue(); });
+  window.addEventListener('offline', () => setConn('offline'));
+  setInterval(flushQueue, 30000);
+  updateConnUI();
+  await loadKalamehFont();
+  loadSystemConfig();
+  loadProfileData(currentProfile);
+}
+window.addEventListener('load', boot);
+
+// ==================== PWA ====================
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js'));
+}
+
+</script>
+</body>
+</html>

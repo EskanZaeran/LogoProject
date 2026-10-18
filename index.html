@@ -382,6 +382,105 @@
     box-shadow:var(--shadow); display:none;
   }
 
+  /* ---------- Profile search / categories ---------- */
+  .pfilter{ display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:14px; }
+  .searchbox{ position:relative; flex:1 1 220px; max-width:360px; }
+  .searchbox input{ padding-inline-start:40px; }
+  .searchbox .ic{ position:absolute; inset-inline-start:13px; top:50%; transform:translateY(-50%); color:var(--muted-2); pointer-events:none; }
+  .catchips{ display:flex; gap:6px; flex-wrap:wrap; }
+  .catchip{ background:var(--surface); color:var(--muted); border:1px solid var(--border); padding:6px 14px; font-size:12.5px; border-radius:999px; }
+  .catchip:hover{ background:var(--surface-2); color:var(--ink); }
+  .catchip.on{ background:var(--primary); color:var(--primary-ink); border-color:var(--primary); }
+  .catchip .n{ opacity:.7; margin-inline-start:6px; font-weight:600; }
+  .cat-head{ display:flex; align-items:center; gap:10px; margin:20px 0 10px; font-size:13px; font-weight:800; }
+  .cat-head:first-child{ margin-top:4px; }
+  .cat-head::after{ content:''; flex:1; height:1px; background:var(--border-soft); }
+  .cat-head .n{ font-size:11px; color:var(--muted); font-weight:700; background:var(--surface-3); padding:0 8px; border-radius:999px; }
+  .pcards{ display:grid; grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:10px; }
+  .pthumb{ height:62px; transition:background .3s; }
+  .pthumb.dk{ background:linear-gradient(135deg,#12302A,#0B1F1A); }
+  .pthumb.lt{ background:linear-gradient(135deg,#F4F8F6,#DDE8E3); }
+  .pthumb.ck{ background:repeating-conic-gradient(#8FA39B 0% 25%, #A9B9B2 0% 50%) 0 0/14px 14px; }
+  .ptags{ display:flex; flex-wrap:wrap; justify-content:center; gap:4px; }
+
+  /* ---------- Connection popover ---------- */
+  .pop{
+    position:fixed; z-index:60; background:var(--surface); border:1px solid var(--border-soft); border-radius:16px;
+    box-shadow:0 18px 48px rgba(8,18,14,.28); overflow:hidden; transform-origin:top left;
+    animation:popIn .24s cubic-bezier(.2,.9,.3,1.15) both;
+  }
+  .pop-head{ display:flex; align-items:center; gap:12px; padding:16px 16px 14px; border-bottom:1px solid var(--border-soft); }
+  .pop-head b{ font-size:13.5px; display:block; line-height:1.5; }
+  .pop-ic{ width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; flex:none; color:#fff; }
+  .pop-head.ok{ background:linear-gradient(135deg, var(--ok-bg), transparent 70%); } .pop-head.ok .pop-ic{ background:#22A06B; }
+  .pop-head.warn{ background:linear-gradient(135deg, var(--warn-bg), transparent 70%); } .pop-head.warn .pop-ic{ background:#E0A100; }
+  .pop-head.sync{ background:linear-gradient(135deg, var(--info-bg), transparent 70%); } .pop-head.sync .pop-ic{ background:#3B82B6; }
+  .pop-head.off{ background:linear-gradient(135deg, var(--err-bg), transparent 70%); } .pop-head.off .pop-ic{ background:#D64545; }
+  .pop-body{ padding:4px 16px; }
+  .pop-row{ display:flex; gap:10px; padding:9px 0; border-bottom:1px solid var(--border-soft); font-size:12.5px; animation:fadeInUp .35s both; }
+  .pop-row:last-child{ border-bottom:none; }
+  .pop-row .ri{ flex:none; margin-top:2px; }
+  .pop-row .ri.ok{ color:#22A06B; } .pop-row .ri.mid{ color:#E0A100; } .pop-row .ri.bad{ color:#D64545; }
+  .pop-row b{ display:block; font-size:12.5px; }
+  .pop.noanim .pop-row{ animation:none; }
+  .pop-foot{ display:flex; gap:8px; padding:10px 16px 14px; flex-wrap:wrap; }
+  .spin{ display:inline-flex; animation:spin 1s linear infinite; }
+
+  /* ---------- Motion & polish ---------- */
+  @keyframes radar{ 0%{ transform:scale(1); opacity:.55; } 100%{ transform:scale(3.6); opacity:0; } }
+  @keyframes blinkRed{ 0%,100%{ opacity:1; } 50%{ opacity:.25; } }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  @keyframes popIn{ from{ opacity:0; transform:translateY(-8px) scale(.93); } to{ opacity:1; transform:none; } }
+  @keyframes modalIn{ from{ opacity:0; transform:translateY(16px) scale(.97); } to{ opacity:1; transform:none; } }
+  @keyframes fade{ from{ opacity:0; } to{ opacity:1; } }
+  @keyframes slideDown{ from{ opacity:0; transform:translateY(-100%); } to{ opacity:1; transform:none; } }
+  @keyframes floaty{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-6px); } }
+  @keyframes stripes{ from{ background-position:0 0; } to{ background-position:24px 0; } }
+  @keyframes ring{ 0%{ box-shadow:0 0 0 0 var(--primary-soft); } 70%{ box-shadow:0 0 0 10px rgba(0,0,0,0); } 100%{ box-shadow:0 0 0 0 rgba(0,0,0,0); } }
+  @keyframes popDot{ 0%{ transform:scale(.4); } 60%{ transform:scale(1.18); } 100%{ transform:scale(1); } }
+  @keyframes lineFill{ from{ transform:scaleX(0); } to{ transform:scaleX(1); } }
+  @keyframes tileIn{ from{ opacity:0; transform:translateY(14px) scale(.97); } to{ opacity:1; transform:none; } }
+  @keyframes toastIn{ from{ opacity:0; transform:translate(50%,12px); } to{ opacity:1; transform:translate(50%,0); } }
+
+  .conn{ cursor:pointer; transition:background .2s, border-color .2s; }
+  .conn:hover{ background:var(--surface-3); }
+  .conn .dot{ position:relative; }
+  .conn.ok .dot::before, .conn.ok .dot::after{ content:''; position:absolute; inset:0; border-radius:50%; background:#22A06B; animation:radar 2.4s ease-out infinite; }
+  .conn.ok .dot::after{ animation-delay:1.2s; }
+  .conn.off .dot{ animation:blinkRed 1.3s ease-in-out infinite; }
+
+  .step-view.enter{ animation:fadeInUp .42s cubic-bezier(.2,.8,.2,1) both; }
+  .pcard{ transition:transform .18s, box-shadow .18s, border-color .18s, background .18s; }
+  .pcard:hover{ transform:translateY(-3px); box-shadow:var(--shadow); }
+  .pcards.anim .pcard{ animation:fadeInUp .42s cubic-bezier(.2,.8,.2,1) both; }
+  .pcard.on::after{
+    content:'✓'; position:absolute; top:8px; inset-inline-end:8px; width:20px; height:20px; border-radius:50%;
+    background:var(--pa); color:#fff; font-size:12px; font-weight:800; display:flex; align-items:center; justify-content:center;
+    animation:popDot .35s ease both;
+  }
+  .tile.in{ animation:tileIn .45s cubic-bezier(.2,.8,.2,1) both; }
+  .progress i{
+    background-image:linear-gradient(45deg, rgba(255,255,255,.28) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.28) 50%, rgba(255,255,255,.28) 75%, transparent 75%);
+    background-size:24px 24px; animation:stripes 1s linear infinite;
+  }
+  .st.on .st-dot{ animation:ring 2s ease-out infinite; }
+  .st.done .st-dot{ animation:popDot .4s ease both; }
+  .st-line{ position:relative; overflow:hidden; }
+  .st-line.fill::after{ content:''; position:absolute; inset:0; background:var(--primary); transform-origin:right; animation:lineFill .5s ease both; }
+  .modal{ animation:fade .2s ease both; }
+  .modal-card{ animation:modalIn .3s cubic-bezier(.2,.9,.3,1.08) both; }
+  #toast{ animation:toastIn .25s ease both; }
+  .annbar{ animation:slideDown .4s ease both; }
+  .entry-logo img, .entry-logo .mono{ animation:floaty 4s ease-in-out infinite; }
+  #dzIcon{ display:inline-block; animation:floaty 3s ease-in-out infinite; }
+  .dropzone.drag #dzIcon{ animation:none; transform:scale(1.25); }
+  .chip{ animation:popDot .4s ease both; }
+  .stat{ transition:transform .18s, box-shadow .18s; }
+  .stat:hover{ transform:translateY(-2px); box-shadow:var(--shadow); }
+  button:not(.secondary):not(.linkbtn):not(.tab-btn):not(.icon-btn):not(.catchip):not(.pcard):not(.conn):not(:disabled):hover{
+    box-shadow:0 6px 16px color-mix(in srgb, var(--primary) 30%, transparent);
+  }
+
   /* ---------- Responsive ---------- */
   @media (max-width:759px){
     .appbar-inner{ padding:10px 14px; }
@@ -445,7 +544,7 @@
       <button class="tab-btn" onclick="switchTab('admin')" id="tabBtnAdmin" style="display:none;">مدیریت</button>
     </div>
     <div class="hdr-actions">
-      <span id="connPill" class="conn ok"></span>
+      <button type="button" id="connPill" class="conn ok" onclick="toggleConnPop(event)"></button>
       <span id="roleBadge" class="role"></span>
       <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" title="تغییر تم"></button>
       <button class="icon-btn" id="logoutBtn" onclick="logout()" title="خروج"></button>
@@ -465,7 +564,11 @@
     <div class="panel">
       <h2 class="ptitle">پروفایل</h2>
       <p class="psub">لوگو و قوانین جای‌گذاری بر اساس پروفایل انتخابی اعمال می‌شود.</p>
-      <div id="profileCards" class="pcards"></div>
+      <div class="pfilter">
+        <div class="searchbox"><span id="searchIc"></span><input type="text" id="profSearch" placeholder="جستجوی پروفایل یا دسته (مثلاً رایا)..." oninput="onProfSearch()" autocomplete="off"></div>
+        <div class="catchips" id="catChips"></div>
+      </div>
+      <div id="profileCards"></div>
     </div>
 
     <div class="panel" id="batchTextCard" style="display:none;">
@@ -778,6 +881,7 @@
   </div>
 </div>
 
+<div id="connPop" class="pop" style="display:none;"></div>
 <div id="toast"></div>
 
 <script>
@@ -791,12 +895,32 @@ const OPERATOR_PASSWORD = "oper1405";
 
 const SYSTEM_KEY = "_system"; // ردیف‌های تنظیمات سیستم (نام پروفایل‌ها، اطلاعیه) در شیت
 
+// ============================================================
+// ★★★ ناحیه‌ی دسته‌ها و لوگوها (برای افزودن دسته یا لوگوی جدید فقط همین‌جا را ویرایش کنید) ★★★
+//
+// ۱) دسته‌ی جدید: یک خط به CATEGORIES اضافه کنید، مثلاً:  moharram: { name: 'محرم' },
+// ۲) لوگوی جدید: فایل را در assets/logos بگذارید و یک خط به PROFILE_BASE اضافه کنید.
+//    - cats: دسته‌هایی که این لوگو در آن‌ها دیده می‌شود. می‌تواند چند دسته باشد،
+//      مثلاً ['raya', 'majmoe'] یعنی هم در «رایا» و هم در «مجموعه» نمایش داده شود.
+//    - hasText: true فقط برای لوگوهایی که کنارشان متن بنر (عنوان و تاریخ) چاپ می‌شود.
+//    - accent: رنگ شاخص کارت (بعداً از پنل ادمین هم قابل تغییر است).
+// کلید هر پروفایل (مثل dual) باید یکتا و فقط انگلیسی باشد.
+// ============================================================
+const CATEGORIES = {
+  raya:    { name: 'رایا' },
+  heyat:   { name: 'هیئت' },
+  majmoe:  { name: 'مجموعه' },
+  moheban: { name: 'محبان' }
+  // ← دسته‌ی جدید را اینجا اضافه کنید
+};
+
 const PROFILE_BASE = {
-  dual:      { name: "دو-لوگو (رایامدیا)",     logoPath: "assets/logos/rayamediaa.png",   hasText: false, accent: "#0B6E4F" },
-  heyat:     { name: "هیئت (با متن)",          logoPath: "assets/logos/heyat.png",        hasText: true,  accent: "#B45309" },
-  janfada:   { name: "رایا و جان فدا",         logoPath: "assets/logos/rayajanfada.png",  hasText: false, accent: "#0369A1" },
-  moheban:   { name: "محبان (بدون پس زمینه)",  logoPath: "assets/logos/moheban.png",      hasText: false, accent: "#9F1239" },
-  mohebanBg: { name: "محبان (با پس زمینه)",    logoPath: "assets/logos/moheban(w).png",   hasText: false, accent: "#0F766E" }
+  dual:      { name: "دو-لوگو (رایامدیا)",     logoPath: "assets/logos/rayamediaa.png",   hasText: false, accent: "#0B6E4F", cats: ['raya'] },
+  heyat:     { name: "هیئت (با متن)",          logoPath: "assets/logos/heyat.png",        hasText: true,  accent: "#B45309", cats: ['heyat'] },
+  janfada:   { name: "رایا و جان فدا",         logoPath: "assets/logos/rayajanfada.png",  hasText: false, accent: "#0369A1", cats: ['raya'] },
+  moheban:   { name: "محبان (بدون پس زمینه)",  logoPath: "assets/logos/moheban.png",      hasText: false, accent: "#9F1239", cats: ['majmoe'] },
+  mohebanBg: { name: "محبان (با پس زمینه)",    logoPath: "assets/logos/moheban(w).png",   hasText: false, accent: "#0F766E", cats: ['majmoe'] }
+  // ← لوگوی جدید را اینجا اضافه کنید
 };
 const PROFILES = {};
 Object.keys(PROFILE_BASE).forEach(k => { PROFILES[k] = { ...PROFILE_BASE[k], hidden: false }; });
@@ -867,7 +991,8 @@ const ICON_PATHS = {
   refresh: '<polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>',
   printer: '<polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>',
   save: '<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>',
-  info: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>'
+  info: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>',
+  search: '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>'
 };
 function icon(name, size) {
   const s = size || 18;
@@ -996,7 +1121,9 @@ function updateConnUI() {
   const map = { online: ['به‌روز', 'ok'], syncing: ['در حال همگام‌سازی', 'sync'], offline: ['آفلاین', 'off'] };
   const m = map[conn] || map.online;
   el.className = 'conn ' + m[1];
+  el.title = 'برای دیدن وضعیت سیستم کلیک کنید';
   el.innerHTML = '<i class="dot"></i><span>' + m[0] + (pend ? ' · ' + toFa(pend) + ' در صف' : '') + '</span>';
+  if (typeof connPopOpen !== 'undefined' && connPopOpen) renderConnPop();
 }
 async function flushQueue() {
   if (flushing) return;
@@ -1021,9 +1148,11 @@ async function postQueued(payload) {
   try {
     const r = await postToSheet(payload);
     setConn('online');
+    lastSync.ok = Date.now();
     return (r && r.success) ? 'ok' : 'fail';
   } catch (err) {
     enqueue(payload);
+    lastSync.err = Date.now();
     setConn('offline');
     return 'queued';
   }
@@ -1079,12 +1208,14 @@ async function fetchPresets(profileKey) {
         .filter(r => r.config);
       saveCachedPresets(profileKey);
       setConn('online');
+      lastSync.ok = Date.now();
       flushQueue();
       if (profileKey === currentProfile) afterPresetsLoaded();
       return true;
     }
   } catch (err) {
     console.error("خطا در خواندن پریست‌ها از شیت:", err);
+    lastSync.err = Date.now();
     setConn('offline');
     if (!presetsCache[profileKey]) presetsCache[profileKey] = [];
   }
@@ -1152,6 +1283,7 @@ async function loadSystemConfig() {
     const res = await fetch(`${APPS_SCRIPT_URL}?profile=${SYSTEM_KEY}`);
     const json = await res.json();
     if (json.success) {
+      lastSync.ok = Date.now();
       sysCfg = parseSys(json.data.map(r => ({ ...r, config: parseConfig(r.config) })).filter(r => r.config));
       try { localStorage.setItem('sys2', JSON.stringify(sysCfg)); } catch (err) {}
       applySys();
@@ -1542,24 +1674,129 @@ function updateFooter() {
 }
 
 // ==================== PROFILE CARDS ====================
-function renderProfileCards() {
-  const wrap = $('profileCards');
-  wrap.innerHTML = '';
+// ==================== PROFILE CARDS: categories + search ====================
+let profFilter = { cat: 'all', q: '' };
+let profAnimate = true;
+let reviewAnimate = true;
+const logoTone = {};
+
+const normText = s => String(s).toLowerCase().replace(/ي/g, 'ی').replace(/ك/g, 'ک').replace(/\u200c/g, ' ');
+function visibleProfileKeys() { return Object.keys(PROFILES).filter(k => role === 'admin' || !PROFILES[k].hidden); }
+function catNames(k) { return (PROFILES[k].cats || []).filter(c => CATEGORIES[c]).map(c => CATEGORIES[c].name); }
+function inCategory(k, cat) {
+  const cats = (PROFILES[k].cats || []).filter(c => CATEGORIES[c]);
+  return cat === '_none' ? cats.length === 0 : cats.indexOf(cat) >= 0;
+}
+function matchProfile(k, q) {
+  if (!q) return true;
+  const hay = normText([PROFILES[k].name].concat(catNames(k)).join(' '));
+  return q.split(/\s+/).filter(Boolean).every(w => hay.indexOf(w) >= 0);
+}
+function onProfSearch() { profFilter.q = $('profSearch').value; profAnimate = true; renderProfileCards(); }
+
+// تشخیص روشنی لوگو: لوگوی روشن/سفید روی زمینه‌ی تیره و لوگوی تیره روی زمینه‌ی روشن نمایش داده می‌شود
+function computeLogoTones() {
   Object.keys(PROFILES).forEach(k => {
-    const p = PROFILES[k];
-    if (p.hidden && role !== 'admin') return;
+    if (logoTone[k]) return;
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      try {
+        const w = 40, h = Math.max(1, Math.round(40 * img.naturalHeight / img.naturalWidth));
+        const c = document.createElement('canvas');
+        c.width = w; c.height = h;
+        const g = c.getContext('2d');
+        g.drawImage(img, 0, 0, w, h);
+        const d = g.getImageData(0, 0, w, h).data;
+        let sum = 0, wt = 0;
+        for (let i = 0; i < d.length; i += 4) {
+          const a = d[i + 3] / 255;
+          if (a < 0.1) continue;
+          sum += ((0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2]) / 255) * a;
+          wt += a;
+        }
+        if (wt < 1) logoTone[k] = 'ck';
+        else { const avg = sum / wt; logoTone[k] = avg > 0.62 ? 'dk' : (avg < 0.38 ? 'lt' : 'ck'); }
+      } catch (err) { logoTone[k] = 'ck'; }
+      renderProfileCards();
+    };
+    img.onerror = () => { logoTone[k] = 'ck'; };
+    img.src = PROFILES[k].logoPath;
+  });
+}
+
+function renderCatChips(keys) {
+  const el = $('catChips');
+  el.innerHTML = '';
+  const mk = (id, label, n) => {
     const b = document.createElement('button');
     b.type = 'button';
-    b.className = 'pcard' + (k === currentProfile ? ' on' : '');
-    b.style.setProperty('--pa', p.accent);
-    b.innerHTML =
-      '<span class="pthumb"><img src="' + esc(p.logoPath) + '" alt="" onerror="this.style.display=\'none\'"></span>' +
-      '<span class="pname">' + esc(p.name) + '</span>' +
-      (p.hasText ? '<span class="ptag">با متن</span>' : '') +
-      (p.hidden ? '<span class="ptag">مخفی</span>' : '');
-    b.onclick = () => selectProfile(k);
-    wrap.appendChild(b);
-  });
+    b.className = 'catchip' + (profFilter.cat === id ? ' on' : '');
+    b.innerHTML = esc(label) + '<span class="n">' + toFa(n) + '</span>';
+    b.onclick = () => { profFilter.cat = id; profAnimate = true; renderProfileCards(); };
+    el.appendChild(b);
+  };
+  const catKeys = Object.keys(CATEGORIES);
+  if (profFilter.cat !== 'all' && profFilter.cat !== '_none' && !CATEGORIES[profFilter.cat]) profFilter.cat = 'all';
+  mk('all', 'همه', keys.length);
+  catKeys.forEach(c => { const n = keys.filter(k => inCategory(k, c)).length; if (n) mk(c, CATEGORIES[c].name, n); });
+  const rest = keys.filter(k => inCategory(k, '_none')).length;
+  if (rest && catKeys.length) mk('_none', 'سایر', rest);
+}
+
+function makeProfileCard(k, i) {
+  const p = PROFILES[k];
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'pcard' + (k === currentProfile ? ' on' : '');
+  b.style.setProperty('--pa', p.accent);
+  if (profAnimate) b.style.animationDelay = (Math.min(i, 12) * 45) + 'ms';
+  const tags = catNames(k).map(n => '<span class="ptag">' + esc(n) + '</span>').join('') +
+    (p.hasText ? '<span class="ptag">با متن</span>' : '') + (p.hidden ? '<span class="ptag">مخفی</span>' : '');
+  b.innerHTML =
+    '<span class="pthumb ' + (logoTone[k] || 'ck') + '"><img src="' + esc(p.logoPath) + '" alt="" onerror="this.style.display=\'none\'"></span>' +
+    '<span class="pname">' + esc(p.name) + '</span><span class="ptags">' + tags + '</span>';
+  b.onclick = () => selectProfile(k);
+  return b;
+}
+
+function renderProfileCards() {
+  const wrap = $('profileCards');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  const keys = visibleProfileKeys();
+  const q = normText(profFilter.q.trim());
+  renderCatChips(keys);
+  const grid = list => {
+    const g = document.createElement('div');
+    g.className = 'pcards' + (profAnimate ? ' anim' : '');
+    list.forEach((k, i) => g.appendChild(makeProfileCard(k, i)));
+    return g;
+  };
+  const head = (name, n) => {
+    const h = document.createElement('div');
+    h.className = 'cat-head';
+    h.innerHTML = '<span>' + esc(name) + '</span><span class="n">' + toFa(n) + '</span>';
+    return h;
+  };
+  if (q || profFilter.cat !== 'all') {
+    const list = keys.filter(k => (profFilter.cat === 'all' || inCategory(k, profFilter.cat)) && matchProfile(k, q));
+    if (!list.length) wrap.innerHTML = '<div class="status info" style="margin-top:0;">پروفایلی با این مشخصات پیدا نشد.</div>';
+    else wrap.appendChild(grid(list));
+  } else if (!Object.keys(CATEGORIES).length) {
+    wrap.appendChild(grid(keys));
+  } else {
+    // نمای گروه‌بندی‌شده: هر لوگو در همه‌ی دسته‌هایش نمایش داده می‌شود
+    Object.keys(CATEGORIES).forEach(c => {
+      const list = keys.filter(k => inCategory(k, c));
+      if (!list.length) return;
+      wrap.appendChild(head(CATEGORIES[c].name, list.length));
+      wrap.appendChild(grid(list));
+    });
+    const rest = keys.filter(k => inCategory(k, '_none'));
+    if (rest.length) { wrap.appendChild(head('سایر', rest.length)); wrap.appendChild(grid(rest)); }
+  }
+  profAnimate = false;
 }
 
 async function selectProfile(k) {
@@ -1594,18 +1831,24 @@ function renderStepper() {
     st.innerHTML = '<span class="st-dot">' + (n < currentStep ? icon('check', 15) : toFa(n)) + '</span><span class="st-label">' + l + '</span>';
     if (n < currentStep) st.onclick = () => goStep(n);
     el.appendChild(st);
-    if (n < 3) { const ln = document.createElement('div'); ln.className = 'st-line'; el.appendChild(ln); }
+    if (n < 3) { const ln = document.createElement('div'); ln.className = 'st-line' + (n < currentStep ? ' fill' : ''); el.appendChild(ln); }
   });
 }
 function goStep(n) {
   if (n >= 2 && !uploadedFiles.length) { toast('ابتدا عکس‌ها را انتخاب کنید.'); return; }
   if (n === 3 && !sampleConfirmed) { toast('ابتدا نمونه‌ی اول را تایید کنید.'); return; }
   currentStep = n;
+  if (n === 2) reviewAnimate = true;
   showStep();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 function showStep() {
-  [1, 2, 3].forEach(i => { $('step' + i).style.display = i === currentStep ? 'block' : 'none'; });
+  [1, 2, 3].forEach(i => {
+    const el = $('step' + i);
+    el.style.display = i === currentStep ? 'block' : 'none';
+    el.classList.add('step-view');
+    if (i === currentStep) { el.classList.remove('enter'); void el.offsetWidth; el.classList.add('enter'); }
+  });
   renderStepper();
   if (currentStep === 2) renderStep2();
   if (currentStep === 3) renderStep3();
@@ -1708,16 +1951,18 @@ function renderSample() {
   $('sampleIssues').innerHTML = issuesHTML(it.qc);
   $('sampleOk').innerHTML = icon('check', 16) + ' تایید نمونه و ادامه';
 }
-function confirmSample() { sampleConfirmed = true; renderStep2(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+function confirmSample() { sampleConfirmed = true; reviewAnimate = true; renderStep2(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
 
 function setFilter(f) {
   reviewFilter = f;
+  reviewAnimate = true;
   $('fltAll').classList.toggle('on', f === 'all');
   $('fltIssues').classList.toggle('on', f === 'issues');
   renderReview();
 }
 
 function renderReview() {
+  const anim = reviewAnimate; reviewAnimate = false;
   const items = uploadedFiles;
   const cnt = { ok: 0, warn: 0, error: 0 };
   items.forEach(i => { cnt[i.qc.lvl]++; });
@@ -1738,10 +1983,11 @@ function renderReview() {
     grid.innerHTML = '<div class="status ok" style="grid-column:1/-1;">همه‌ی عکس‌ها بدون مشکل هستند.</div>';
     return;
   }
-  order.forEach(i => {
+  order.forEach((i, pos) => {
     const it = items[i];
     const tile = document.createElement('div');
-    tile.className = 'tile ' + it.qc.lvl;
+    tile.className = 'tile ' + it.qc.lvl + (anim ? ' in' : '');
+    if (anim) tile.style.animationDelay = (Math.min(pos, 24) * 35) + 'ms';
     const c = document.createElement('canvas');
     c.width = 220; c.height = Math.round(220 * it.height / it.width);
     drawComposite(c, it.img, it.cfg, c.width / it.width, batchText);
@@ -1915,16 +2161,17 @@ function renderStep3() {
     '<h2 class="ptitle">دانلود</h2>' +
     '<p class="psub">خروجی‌ها به‌صورت JPG در یک فایل ZIP ذخیره می‌شوند.</p>' +
     '<div class="stat-row">' +
-      '<div class="stat"><b>' + toFa(items.length) + '</b><span>تعداد عکس</span></div>' +
-      '<div class="stat"><b>' + toFa(c.ok) + '</b><span>بدون مشکل</span></div>' +
-      '<div class="stat"><b>' + toFa(c.warn) + '</b><span>هشدار</span></div>' +
-      '<div class="stat"><b>' + toFa(c.error) + '</b><span>نیازمند بررسی</span></div>' +
+      '<div class=\"stat\">' + statB(items.length) + '<span>تعداد عکس</span></div>' +
+      '<div class=\"stat\">' + statB(c.ok) + '<span>بدون مشکل</span></div>' +
+      '<div class=\"stat\">' + statB(c.warn) + '<span>هشدار</span></div>' +
+      '<div class=\"stat\">' + statB(c.error) + '<span>نیازمند بررسی</span></div>' +
     '</div>' +
     (unackErr ? '<div class="status err">' + toFa(unackErr) + ' عکس هشدار قرمز دارد و هنوز تایید نشده است. می‌توانید به مرحله‌ی بررسی برگردید، یا با تایید جداگانه ادامه دهید.</div>' : '') +
     '<div id="dlProg" style="display:none; margin-top:14px;"><div class="progress"><i id="dlBar"></i></div><div class="prog-label"><span id="dlPhase">در حال ساخت فایل‌ها...</span><span id="dlPct"></span></div></div>' +
     '<div class="btn-row"><button id="dlBtn">' + icon('download', 16) + ' پردازش و دانلود همه (ZIP)</button><button class="secondary" onclick="goStep(2)">بازگشت به بررسی</button></div>' +
     '<div id="dlMsg"></div>';
   $('dlBtn').onclick = startDownload;
+  animateCounts($('dlPanel'));
 }
 
 async function startDownload() {
@@ -2392,15 +2639,16 @@ async function renderDashboard() {
   const ratioEntries = Object.entries(agg.ratios).sort((a, b) => b[1] - a[1]).slice(0, 8);
   box.innerHTML =
     '<div class="stat-row">' +
-      '<div class="stat"><b>' + toFa(agg.downloads) + '</b><span>دانلود (ZIP)</span></div>' +
-      '<div class="stat"><b>' + toFa(agg.images) + '</b><span>عکس پردازش‌شده</span></div>' +
-      '<div class="stat"><b>' + toFa(openReports) + '</b><span>گزارش باز (چینش اشتباه)</span></div>' +
-      '<div class="stat"><b>' + toFa(overridesCount) + '</b><span>اصلاح ثبت‌شده برای نسبت‌ها</span></div>' +
+      '<div class=\"stat\">' + statB(agg.downloads) + '<span>دانلود (ZIP)</span></div>' +
+      '<div class=\"stat\">' + statB(agg.images) + '<span>عکس پردازش‌شده</span></div>' +
+      '<div class=\"stat\">' + statB(openReports) + '<span>گزارش باز (چینش اشتباه)</span></div>' +
+      '<div class=\"stat\">' + statB(overridesCount) + '<span>اصلاح ثبت‌شده برای نسبت‌ها</span></div>' +
     '</div>' +
     (agg.downloads ? '' : '<div class="status info">هنوز دانلودی ثبت نشده است. ابعاد و هشدارها فقط برای دانلودهای بعد از نسخه‌ی ۲ ثبت می‌شوند.</div>') +
     '<div class="cols2"><div><h3 class="ptitle">عکس در ۱۴ روز اخیر</h3>' + barsHTML(days) + '</div>' +
     '<div><h3 class="ptitle">به تفکیک پروفایل</h3>' + (profEntries.length ? barsHTML(profEntries, k => esc(profileName(k))) : '<div class="muted small">—</div>') +
     '<h3 class="ptitle" style="margin-top:18px;">پرکاربردترین ابعاد</h3>' + (ratioEntries.length ? barsHTML(ratioEntries) : '<div class="muted small">—</div>') + '</div></div>';
+  animateCounts(box);
 }
 
 function jparts(d) {
@@ -2464,15 +2712,16 @@ async function renderMonthly() {
     '<h3>گزارش ماهانه‌ی سیستم بچ لوگو — ' + esc(o.label) + '</h3>' +
     '<div class="muted small">تاریخ تهیه: ' + fmtDate(Date.now()) + ' · نسخه‌ی ' + toFa(APP_VERSION) + '</div>' +
     '<div class="stat-row">' +
-      '<div class="stat"><b>' + toFa(agg.downloads) + '</b><span>دانلود (ZIP)</span></div>' +
-      '<div class="stat"><b>' + toFa(agg.images) + '</b><span>عکس پردازش‌شده</span></div>' +
-      '<div class="stat"><b>' + toFa(agg.warnings) + '</b><span>عکس دارای هشدار</span></div>' +
-      '<div class="stat"><b>' + toFa(agg.errors) + '</b><span>عکس نیازمند بررسی</span></div>' +
+      '<div class=\"stat\">' + statB(agg.downloads) + '<span>دانلود (ZIP)</span></div>' +
+      '<div class=\"stat\">' + statB(agg.images) + '<span>عکس پردازش‌شده</span></div>' +
+      '<div class=\"stat\">' + statB(agg.warnings) + '<span>عکس دارای هشدار</span></div>' +
+      '<div class=\"stat\">' + statB(agg.errors) + '<span>عکس نیازمند بررسی</span></div>' +
     '</div>' +
     (agg.downloads ? '' : '<div class="status info">در این ماه دانلودی ثبت نشده است.</div>') +
     '<div class="cols2"><div><h3 class="ptitle">به تفکیک پروفایل</h3><table class="tbl"><thead><tr><th>پروفایل</th><th>عکس</th></tr></thead><tbody>' + (profRows || '<tr><td colspan="2" class="muted">—</td></tr>') + '</tbody></table></div>' +
     '<div><h3 class="ptitle">پرکاربردترین ابعاد</h3><table class="tbl"><thead><tr><th>ابعاد</th><th>عکس</th></tr></thead><tbody>' + (ratioRows || '<tr><td colspan="2" class="muted">—</td></tr>') + '</tbody></table></div></div>' +
     '<p class="muted small" style="margin-top:14px;">گزارش‌های بازِ چینش اشتباه در حال حاضر: ' + toFa(reportsOpen) + '</p>';
+  animateCounts(box);
 }
 function printReport() {
   document.body.classList.add('print-report');
@@ -2606,13 +2855,13 @@ async function saveAnnounce() {
 }
 
 // ==================== ADMIN: HEALTH ====================
-function testImg(src, ms) {
+function testImg(src, ms, noBust) {
   return new Promise(res => {
     const i = new Image();
     const t = setTimeout(() => res(false), ms || 6000);
     i.onload = () => { clearTimeout(t); res(true); };
     i.onerror = () => { clearTimeout(t); res(false); };
-    i.src = src + (src.indexOf('?') >= 0 ? '&' : '?') + 'hc=' + Date.now();
+    i.src = noBust ? src : src + (src.indexOf('?') >= 0 ? '&' : '?') + 'hc=' + Date.now();
   });
 }
 async function runHealth() {
@@ -2692,9 +2941,151 @@ function closeGuide() {
   try { localStorage.setItem('guide2', '1'); } catch (err) {}
 }
 
+// ==================== COUNT-UP ====================
+function statB(n) { return '<b data-count="' + n + '">' + toFa(n) + '</b>'; }
+function animateCounts(root) {
+  (root || document).querySelectorAll('[data-count]').forEach(el => {
+    const target = Number(el.getAttribute('data-count')) || 0;
+    el.textContent = toFa(0);
+    if (!target) return;
+    const t0 = performance.now(), dur = 700;
+    const tick = now => {
+      const p = Math.min(1, (now - t0) / dur);
+      el.textContent = toFa(Math.round(target * (1 - Math.pow(1 - p, 3))));
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  });
+}
+
+// ==================== CONNECTION POPOVER ====================
+let lastSync = { ok: 0, err: 0 };
+let logoStatus = {};
+let connPopOpen = false, connPopRendered = false, connPopTimer = null, connChecking = false;
+
+function relTime(ts) {
+  if (!ts) return '—';
+  const s = Math.max(0, Math.round((Date.now() - ts) / 1000));
+  if (s < 10) return 'همین حالا';
+  if (s < 60) return toFa(s) + ' ثانیه پیش';
+  if (s < 3600) return toFa(Math.floor(s / 60)) + ' دقیقه پیش';
+  return fmtDateTime(ts);
+}
+async function checkLogos() {
+  await Promise.all(Object.keys(PROFILES).map(async k => { logoStatus[k] = await testImg(PROFILES[k].logoPath, 6000, true); }));
+}
+function positionConnPop() {
+  const pop = $('connPop'), r = $('connPill').getBoundingClientRect();
+  const w = Math.min(340, window.innerWidth - 24);
+  pop.style.width = w + 'px';
+  pop.style.left = Math.max(12, Math.min(r.left, window.innerWidth - w - 12)) + 'px';
+  pop.style.top = (r.bottom + 10) + 'px';
+}
+function toggleConnPop(e) {
+  if (e) e.stopPropagation();
+  if (connPopOpen) closeConnPop(); else openConnPop();
+}
+function openConnPop() {
+  connPopOpen = true; connPopRendered = false;
+  $('connPop').style.display = 'block';
+  positionConnPop();
+  renderConnPop();
+  checkLogos().then(() => { if (connPopOpen) renderConnPop(); });
+  connPopTimer = setInterval(() => { if (connPopOpen) renderConnPop(); }, 10000);
+}
+function closeConnPop() {
+  connPopOpen = false;
+  clearInterval(connPopTimer);
+  $('connPop').style.display = 'none';
+}
+function connRows() {
+  const keys = Object.keys(PROFILES);
+  const failed = keys.filter(k => logoStatus[k] === false);
+  const pending = keys.filter(k => logoStatus[k] === undefined);
+  const sheet = conn === 'offline' ? 'bad' : (lastSync.ok ? 'ok' : 'mid');
+  const prof = failed.length ? 'bad' : (pending.length ? 'mid' : 'ok');
+  const rows = [];
+  rows.push({
+    st: sheet, title: 'اتصال به دیتابیس',
+    msg: sheet === 'ok' ? 'متصل به دیتابیس (Google Sheets) · آخرین همگام‌سازی: ' + relTime(lastSync.ok)
+      : sheet === 'bad' ? 'اتصال برقرار نیست؛ برنامه با آخرین قوانین ذخیره‌شده کار می‌کند.' : 'در حال برقراری اتصال...'
+  });
+  rows.push({
+    st: prof, title: 'پروفایل‌ها',
+    msg: prof === 'ok' ? 'تمام ' + toFa(keys.length) + ' پروفایل آماده‌اند.'
+      : prof === 'bad' ? 'لوگو پیدا نشد: ' + failed.map(k => PROFILES[k].name).join('، ')
+      : 'در حال بررسی لوگوها (' + toFa(keys.length - pending.length) + ' از ' + toFa(keys.length) + ')...'
+  });
+  const rt = getRules(currentProfile).rulesTs;
+  rows.push({
+    st: rt ? 'ok' : 'mid', title: 'قوانین جای‌گذاری',
+    msg: rt ? 'آخرین به‌روزرسانی برای «' + PROFILES[currentProfile].name + '»: ' + fmtDate(rt) : 'برای این پروفایل هنوز قانونی ذخیره نشده؛ قانون پیش‌فرض اولیه اعمال می‌شود.'
+  });
+  rows.push({ st: kalamehFont ? 'ok' : 'mid', title: 'فونت متن بنر', msg: kalamehFont ? 'فونت کلمه آماده است.' : 'فونت کلمه بارگذاری نشده؛ از فونت پیش‌فرض استفاده می‌شود.' });
+  const q = loadQueue().length;
+  rows.push({ st: q ? 'mid' : 'ok', title: 'صف ارسال', msg: q ? toFa(q) + ' مورد منتظر ارسال است و با وصل شدن اینترنت فرستاده می‌شود.' : 'همه‌ی گزارش‌ها ارسال شده‌اند.' });
+  const swOn = ('serviceWorker' in navigator) && navigator.serviceWorker.controller;
+  rows.push({ st: swOn ? 'ok' : 'mid', title: 'حالت آفلاین', msg: swOn ? 'فعال است؛ برنامه بدون اینترنت هم باز می‌شود.' : 'فعال نیست؛ برای باز شدن برنامه اینترنت لازم است.' });
+  rows.push({ st: 'ok', title: 'نسخه', msg: 'نسخه‌ی ' + toFa(APP_VERSION) + ' · ورود به‌عنوان ' + (ROLE_LABEL[role] || '') });
+  let overall;
+  if (conn === 'offline') overall = 'off';
+  else if (conn === 'syncing' || connChecking) overall = 'sync';
+  else overall = (sheet !== 'ok' || prof === 'bad') ? 'warn' : 'ok';
+  return { rows, overall };
+}
+function renderConnPop() {
+  const pop = $('connPop');
+  if (!pop || !connPopOpen) return;
+  const { rows, overall } = connRows();
+  const titles = {
+    ok: ['متصل به دیتابیس', 'همه‌چیز آماده و به‌روز است'],
+    warn: ['متصل است', 'چند مورد نیاز به توجه دارد'],
+    sync: ['در حال همگام‌سازی...', 'لطفاً چند لحظه صبر کنید'],
+    off: ['آفلاین', 'اتصال به دیتابیس برقرار نیست']
+  };
+  const heads = { ok: 'check', warn: 'alert', sync: 'refresh', off: 'xcircle' };
+  const ric = { ok: 'check', mid: 'alert', bad: 'xcircle' };
+  pop.classList.toggle('noanim', connPopRendered);
+  connPopRendered = true;
+  pop.innerHTML =
+    '<div class="pop-head ' + overall + '"><span class="pop-ic">' + (overall === 'sync' ? '<span class="spin">' + icon('refresh', 20) + '</span>' : icon(heads[overall], 20)) + '</span>' +
+    '<div><b>' + titles[overall][0] + '</b><div class="muted small">' + titles[overall][1] + '</div></div></div>' +
+    '<div class="pop-body">' + rows.map((r, i) =>
+      '<div class="pop-row" style="animation-delay:' + (i * 55) + 'ms"><span class="ri ' + r.st + '">' + icon(ric[r.st], 16) + '</span><div><b>' + esc(r.title) + '</b><span class="muted">' + esc(r.msg) + '</span></div></div>'
+    ).join('') + '</div>' +
+    '<div class="pop-foot"><button class="secondary sm" onclick="recheckConn()"' + (connChecking ? ' disabled' : '') + '>' +
+      (connChecking ? '<span class="spin">' + icon('refresh', 14) + '</span>' : icon('refresh', 14)) + ' بررسی دوباره</button>' +
+      (role === 'admin' ? '<button class="linkbtn sm" onclick="goHealth()">سلامت کامل سیستم</button>' : '') + '</div>';
+}
+async function recheckConn() {
+  if (connChecking) return;
+  connChecking = true;
+  setConn('syncing');
+  renderConnPop();
+  try {
+    await Promise.all([fetchPresets(currentProfile), checkLogos(), loadSystemConfig()]);
+    flushQueue();
+  } finally {
+    connChecking = false;
+    updateConnUI();
+    renderConnPop();
+  }
+}
+function goHealth() { closeConnPop(); switchTab('admin'); showAdminSection('health'); }
+function initConnPop() {
+  document.addEventListener('click', e => {
+    if (!connPopOpen) return;
+    if ($('connPop').contains(e.target) || $('connPill').contains(e.target)) return;
+    closeConnPop();
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && connPopOpen) closeConnPop(); });
+  window.addEventListener('resize', () => { if (connPopOpen) positionConnPop(); });
+}
+
 // ==================== ICONS INIT + BOOT ====================
 function initIcons() {
   $('logoutBtn').innerHTML = icon('logout', 18);
+  $('searchIc').innerHTML = icon('search', 16);
 }
 async function boot() {
   initTheme();
@@ -2703,6 +3094,9 @@ async function boot() {
   initModal();
   initAdminFile();
   setupEditorDrag();
+  initConnPop();
+  computeLogoTones();
+  checkLogos().then(updateConnUI);
   try { const lp = localStorage.getItem('lastProfile2'); if (lp && PROFILES[lp]) currentProfile = lp; } catch (err) {}
   let entered = false;
   try { role = sessionStorage.getItem('role2') || 'guest'; entered = sessionStorage.getItem('entered2') === '1'; } catch (err) {}

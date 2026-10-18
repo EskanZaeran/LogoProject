@@ -551,6 +551,15 @@
     .pname{ font-size:12px; }
     .brand span:not(.mark){ display:none; }
   }
+/* اصلاح سرریز جستجو و دسته‌ها در گوشی */
+body{ overflow-x:clip; }
+main.shell{ overflow-x:clip; }
+.panel{ min-width:0; }
+@media (max-width:759px){
+  .pfilter{ display:grid; grid-template-columns:minmax(0,1fr); gap:10px; }
+  .pfilter > *{ min-width:0; max-width:100%; }
+  .catchips{ flex-wrap:wrap; overflow-x:visible; }
+}
 </style>
 </head>
 <body>

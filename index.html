@@ -852,7 +852,7 @@
     <div class="panel">
       <h2 class="ptitle">اطلاعیه‌ی ادمین</h2>
       <p class="psub">این پیام به‌صورت یک نوار بالای صفحه برای همه‌ی کاربران نمایش داده می‌شود.</p>
-      <div class="field"><label for="annText">متن اطلاعیه</label><textarea id="annText" placeholder="مثلاً: لوگوی جدید محبان اضافه شد."></textarea></div>
+      <div class="field"><label for="annText">متن اطلاعیه</label><textarea id="annText" placeholder="مثلاً: لوگوی جدید  اضافه شد."></textarea></div>
       <div class="cols2">
         <div class="field"><label for="annLevel">نوع</label>
           <select id="annLevel"><option value="info">اطلاع‌رسانی</option><option value="ok">خبر خوب</option><option value="warn">هشدار</option></select>
@@ -960,18 +960,18 @@ const SYSTEM_KEY = "_system"; // ردیف‌های تنظیمات سیستم (ن
 // ============================================================
 const CATEGORIES = {
   raya:    { name: 'رایا' },
-  heyat:   { name: 'هیئت' },
-  majmoe:  { name: 'مجموعه' },
-  moheban: { name: 'محبان' }
+  heyat:   { name: 'هیئت عشاق الحیدر (ع)' },
+  majmoe:  { name: 'کانون محبان المهدی(عج)' },
+  
   // ← دسته‌ی جدید را اینجا اضافه کنید
 };
 
 const PROFILE_BASE = {
   dual:      { name: "دو-لوگو (رایامدیا)",     logoPath: "assets/logos/rayamediaa.png",   hasText: false, accent: "#0B6E4F", cats: ['raya'] },
   heyat:     { name: "هیئت (با متن)",          logoPath: "assets/logos/heyat.png",        hasText: true,  accent: "#B45309", cats: ['heyat'] },
-  janfada:   { name: "رایا و جان فدا",         logoPath: "assets/logos/rayajanfada.png",  hasText: false, accent: "#0369A1", cats: ['raya', 'majmoe'] },
-  moheban:   { name: "محبان (بدون پس زمینه)",  logoPath: "assets/logos/moheban.png",      hasText: false, accent: "#9F1239", cats: ['moheban'] },
-  mohebanBg: { name: "محبان (با پس زمینه)",    logoPath: "assets/logos/moheban(w).png",   hasText: false, accent: "#0F766E", cats: ['moheban'] }
+  janfada:   { name: "رایا و جان فدا",         logoPath: "assets/logos/rayajanfada.png",  hasText: false, accent: "#0369A1", cats: ['raya'] },
+  moheban:   { name: "محبان (بدون پس زمینه)",  logoPath: "assets/logos/moheban.png",      hasText: false, accent: "#9F1239", cats: ['majmoe'] },
+  mohebanBg: { name: "محبان (با پس زمینه)",    logoPath: "assets/logos/moheban(w).png",   hasText: false, accent: "#0F766E", cats: ['majmoe'] }
   // ← لوگوی جدید را اینجا اضافه کنید
 };
 const PROFILES = {};

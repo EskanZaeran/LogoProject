@@ -558,14 +558,13 @@
 <!-- ================= ENTRY ================= -->
 <div id="entry" class="entry" style="display:none;">
   <div class="entry-card">
-    <div class="entry-logo">
+    <div class="entry-logo" id="entryLogoWrap">
       <img id="entryLogo" src="assets/logos/login-logo.png" alt="" onerror="this.style.display='none'; document.getElementById('entryMono').style.display='flex';">
       <div id="entryMono" class="mono" style="display:none;">ب</div>
     </div>
-    <h1>سیستم بچ لوگو</h1>
+    <h1 id="entryTitle">سیستم بچ لوگو</h1>
     <p class="entry-sub">درج یکپارچه‌ی لوگو و متن روی عکس‌ها، با کنترل کیفیت پیش از دانلود</p>
     <button class="block" onclick="enterGuest()">ورود به سیستم</button>
-    <button class="linkbtn block" onclick="toggleAccess()">ورود اپراتور / ادمین</button>
     <div id="accessBox" style="display:none;">
       <div class="field">
         <label for="accessRole">سطح دسترسی</label>
@@ -587,7 +586,7 @@
 <!-- ================= HEADER ================= -->
 <header class="appbar" id="appbar" style="display:none;">
   <div class="appbar-inner">
-    <div class="brand">
+    <div class="brand" id="brandTap">
       <img id="brandLogo" src="assets/logos/login-logo.png" alt="" onerror="this.style.display='none'; document.getElementById('brandMark').style.display='inline-block';">
       <span class="mark" id="brandMark" style="display:none;"></span>
       <span>سیستم بچ لوگو</span>
@@ -1662,9 +1661,35 @@ function drawComposite(canvas, photoImg, config, scaleFactor, textLines) {
 }
 
 // ==================== ENTRY / ROLES ====================
-function toggleAccess() {
+// ورود اپراتور/ادمین عمداً در صفحه‌ی ورود دیده نمی‌شود. راه‌های باز شدنش:
+//  ۱) باز کردن آدرس با  #staff  (مثلاً  .../index.html#staff)
+//  ۲) ۷ بار پشت‌سرهم کلیک روی لوگو یا عنوان صفحه‌ی ورود
+//  ۳) داخل برنامه (با ورود عادی): ۷ بار کلیک روی لوگوی بالای صفحه
+function revealAccess() {
   const b = $('accessBox');
-  b.style.display = b.style.display === 'none' ? 'block' : 'none';
+  b.style.display = 'block';
+  try { $('accessPass').focus(); } catch (err) {}
+}
+function initEntrySecret() {
+  let taps = 0, timer = null;
+  const hit = () => {
+    taps++; clearTimeout(timer);
+    timer = setTimeout(() => { taps = 0; }, 2500);
+    if (taps >= 7) { taps = 0; revealAccess(); }
+  };
+  $('entryLogoWrap').addEventListener('click', hit);
+  $('entryTitle').addEventListener('click', hit);
+  let bt = 0, btTimer = null;
+  $('brandTap').addEventListener('click', () => {
+    if (role !== 'guest') return;
+    bt++; clearTimeout(btTimer);
+    btTimer = setTimeout(() => { bt = 0; }, 2500);
+    if (bt >= 7) {
+      bt = 0;
+      try { sessionStorage.setItem('reveal2', '1'); } catch (err) {}
+      location.reload();
+    }
+  });
 }
 function setRole(r) {
   role = r;
@@ -1694,6 +1719,7 @@ function showApp() {
   $('appFooter').style.display = '';
   $('tabBtnAdmin').style.display = role === 'admin' ? '' : 'none';
   $('roleBadge').textContent = ROLE_LABEL[role] || '';
+  $('logoutBtn').style.display = role === 'guest' ? 'none' : '';
   if (PROFILES[currentProfile].hidden && role !== 'admin') {
     const first = Object.keys(PROFILES).find(k => !PROFILES[k].hidden);
     if (first) currentProfile = first;
@@ -3152,9 +3178,20 @@ async function boot() {
   computeLogoTones();
   checkLogos().then(updateConnUI);
   try { const lp = localStorage.getItem('lastProfile2'); if (lp && PROFILES[lp]) currentProfile = lp; } catch (err) {}
-  let entered = false;
-  try { role = sessionStorage.getItem('role2') || 'guest'; entered = sessionStorage.getItem('entered2') === '1'; } catch (err) {}
-  if (entered) showApp(); else $('entry').style.display = 'flex';
+  let entered = false, reveal = false;
+  try {
+    role = sessionStorage.getItem('role2') || 'guest';
+    entered = sessionStorage.getItem('entered2') === '1';
+    reveal = sessionStorage.getItem('reveal2') === '1';
+    sessionStorage.removeItem('reveal2');
+  } catch (err) {}
+  if (/(^|[#?&])staff\b/.test(location.hash + location.search)) reveal = true;
+  if (reveal) {
+    entered = false; role = 'guest';
+    try { sessionStorage.removeItem('entered2'); sessionStorage.removeItem('role2'); } catch (err) {}
+  }
+  initEntrySecret();
+  if (entered) showApp(); else { $('entry').style.display = 'flex'; if (reveal) revealAccess(); }
   window.addEventListener('online', () => { setConn('online'); flushQueue(); });
   window.addEventListener('offline', () => setConn('offline'));
   setInterval(flushQueue, 30000);

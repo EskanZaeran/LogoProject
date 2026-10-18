@@ -1551,6 +1551,22 @@ function applyVignette(ctx, W, H, intensity) {
   ctx.restore();
 }
 
+// چیدمان دستی متن راست‌به‌چپ: هر کلمه جداگانه و با تراز چپ (فیزیکی) رسم می‌شود تا نتیجه
+// به رفتار متفاوت مرورگرها در تراز راست و جهت متن (direction) وابسته نباشد.
+function rtlLayout(ctx, str) {
+  const words = String(str).split(/\s+/).filter(Boolean);
+  let space = ctx.measureText(' ').width;
+  if (!space || !isFinite(space)) space = (parseFloat(ctx.font) || 12) * 0.25;
+  const items = words.map(t => ({ t, w: ctx.measureText(t).width }));
+  const width = items.reduce((s, i) => s + i.w, 0) + space * Math.max(0, items.length - 1);
+  return { items, space, width };
+}
+function drawRtlLine(ctx, str, rightX, y) {
+  const L = rtlLayout(ctx, str);
+  let x = rightX;
+  L.items.forEach(it => { x -= it.w; ctx.fillText(it.t, x, y); x -= L.space; });
+}
+
 // خروجی: false اگر عکس رسم نشد؛ وگرنه شیء متریک متن
 function drawComposite(canvas, photoImg, config, scaleFactor, textLines) {
   const ctx = canvas.getContext('2d');
@@ -1612,15 +1628,16 @@ function drawComposite(canvas, photoImg, config, scaleFactor, textLines) {
     const textRightX = Math.min(lx - gapX + offX, W - margin);
     const maxTextWidth = Math.max(20, textRightX - margin);
 
-    ctx.textAlign = 'right';
+    ctx.textAlign = 'left';
     ctx.direction = 'rtl';
+    ctx.textBaseline = 'alphabetic';
     ctx.fillStyle = TEXT_STYLE.color;
 
     ctx.font = `${fontSize}px Kalameh, Vazirmatn, sans-serif`;
     const widths = [];
     const rtlSafe = s => toPersianDigits(s);
-    if (textLines.title) widths.push(ctx.measureText(rtlSafe(textLines.title)).width);
-    if (textLines.date) widths.push(ctx.measureText(rtlSafe(textLines.date)).width);
+    if (textLines.title) widths.push(rtlLayout(ctx, rtlSafe(textLines.title)).width);
+    if (textLines.date) widths.push(rtlLayout(ctx, rtlSafe(textLines.date)).width);
     const widestLine = widths.length ? Math.max(...widths) : 0;
 
     if (widestLine > maxTextWidth) {
@@ -1643,10 +1660,10 @@ function drawComposite(canvas, photoImg, config, scaleFactor, textLines) {
       ctx.shadowOffsetY = shadowOffY;
     }
 
-    if (textLines.title) ctx.fillText(rtlSafe(textLines.title), textRightX, cursorY);
+    if (textLines.title) drawRtlLine(ctx, rtlSafe(textLines.title), textRightX, cursorY);
     if (textLines.date) {
       cursorY += lineGap + fontSize;
-      ctx.fillText(rtlSafe(textLines.date), textRightX, cursorY);
+      drawRtlLine(ctx, rtlSafe(textLines.date), textRightX, cursorY);
     }
 
     if (SHADOW_STYLE.enabled) {

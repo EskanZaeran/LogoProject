@@ -3213,7 +3213,7 @@ async function boot() {
     reveal = sessionStorage.getItem('reveal2') === '1';
     sessionStorage.removeItem('reveal2');
   } catch (err) {}
-  if (/(^|[#?&])staff\b/.test(location.hash + location.search)) reveal = true;
+  if (/(^|[#?&])admin\b/.test(location.hash + location.search)) reveal = true;
   if (reveal) {
     entered = false; role = 'guest';
     try { sessionStorage.removeItem('entered2'); sessionStorage.removeItem('role2'); } catch (err) {}

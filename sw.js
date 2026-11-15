@@ -32,10 +32,12 @@ self.addEventListener('fetch', e => {
   };
 
   if (url.origin === location.origin) {
-    // فایل‌های خود سایت: اول اینترنت، اگه نبود کش
-    e.respondWith(fetch(req).then(save).catch(() => caches.match(req)));
-  } else {
-    // فونت و JSZip: اول کش
-    e.respondWith(caches.match(req).then(hit => hit || fetch(req).then(save)));
+    // اول کش (فوری)، همزمان از اینترنت به‌روز می‌شود
+    e.respondWith(
+      caches.match(req).then(hit => {
+        const net = fetch(req).then(save).catch(() => hit);
+        return hit || net;
+      })
+    );
   }
 });

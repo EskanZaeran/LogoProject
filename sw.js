@@ -1,8 +1,11 @@
-const CACHE = 'batch-logo-v1';
-const CORE = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
+const CACHE = 'batch-logo-v2';
+const CORE = ['./', './index.html', './v3.js', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)));
+  // اگر یک فایل پیدا نشود addAll کل نصب را خراب می‌کند؛ اینجا هر فایل جدا کش می‌شود
+  e.waitUntil(
+    caches.open(CACHE).then(c => Promise.all(CORE.map(u => c.add(u).catch(() => {}))))
+  );
   self.skipWaiting();
 });
 
@@ -21,8 +24,10 @@ self.addEventListener('fetch', e => {
   if (/script\.google|googleusercontent|ipify/.test(url.hostname)) return;
 
   const save = res => {
-    const copy = res.clone();
-    caches.open(CACHE).then(c => c.put(req, copy));
+    if (res && res.ok) {
+      const copy = res.clone();
+      caches.open(CACHE).then(c => c.put(req, copy));
+    }
     return res;
   };
 
